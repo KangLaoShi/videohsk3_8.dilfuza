@@ -4,38 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kang Laoshi - 交互式视频演示</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         /* 自定义滚动条 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* 拼音汉字注音样式 (Ruby) */
-        ruby { ruby-align: center; }
-        rt { font-size: 0.75rem; color: #6b7280; user-select: none; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* 拼音汉字注音样式 */
+        ruby {
+            ruby-align: center;
+        }
+
+        rt {
+            font-size: 0.75rem;
+            color: #6b7280;
+            user-select: none;
+        }
 
         /* ================================
            响应式布局
-           PC：保持原来的左视频 + 右字幕
-           手机：视频固定在顶部，下面依次为简介、字幕、生词
+           PC：左视频 + 右字幕
+           手机：视频固定顶部 → 简介 → 字幕 → 生词
            ================================ */
+
         @media (max-width: 1023px) {
-            /* 手机端主区域改为纵向排列 */
+
             main.mobile-layout {
                 display: flex !important;
                 flex-direction: column !important;
                 gap: 1rem !important;
             }
 
-            /* 让视频、简介、生词可以按照 main 的 order 排列 */
             .mobile-content-wrapper {
                 display: contents !important;
             }
 
-            /* ① 手机端视频：固定/悬浮在顶部 */
+            /* 手机端视频固定在顶部 */
             .mobile-video {
                 order: 1 !important;
                 position: fixed !important;
@@ -49,14 +71,14 @@
                 margin: 0 !important;
             }
 
-            /* ② 课程简介 */
+            /* 课程简介 */
             .mobile-intro {
                 order: 2 !important;
                 width: 100% !important;
                 margin-top: calc(56.25vw + 0.5rem) !important;
             }
 
-            /* ③ 手机端字幕：不再限制 500px 高度，由整页向下滚动 */
+            /* 字幕 */
             .mobile-transcript {
                 order: 3 !important;
                 width: 100% !important;
@@ -71,14 +93,14 @@
                 max-height: none !important;
             }
 
-            /* ④ 生词 */
+            /* 生词 */
             .mobile-vocab {
                 order: 4 !important;
                 width: 100% !important;
             }
         }
 
-        /* PC端完全保持原来的布局和尺寸 */
+        /* PC端 */
         @media (min-width: 1024px) {
             .mobile-content-wrapper {
                 display: flex;
@@ -86,715 +108,1516 @@
         }
     </style>
 </head>
+
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <!-- 顶部简易导航 -->
+    <!-- 顶部导航 -->
     <header class="bg-white border-b border-gray-200 h-16 flex items-center shrink-0 z-50 sticky top-0">
         <div class="max-w-7xl w-full mx-auto px-4 flex justify-between items-center">
+
             <a href="#" class="text-xl font-bold text-red-600 flex items-center gap-2">
                 <i data-lucide="book-open"></i>
                 <span>康老师中文</span>
             </a>
-            <button class="text-sm font-medium text-gray-500 hover:text-gray-900">返回课程列表</button>
+
+            <button class="text-sm font-medium text-gray-500 hover:text-gray-900">
+                返回课程列表
+            </button>
+
         </div>
     </header>
 
-    <!-- 主体内容区 -->
-    <!-- 移动端使用 Flex 纵向排序，PC端使用 Grid 网格布局 -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:items-start relative mobile-layout">
-        
-        <!-- 第一部分：视频播放器与详情 (移动端第一，PC端左上) -->
-        <div class="order-1 lg:col-span-7 lg:col-start-1 lg:row-start-1 flex flex-col gap-4 w-full mobile-content-wrapper">
-            
-            <div class="bg-black rounded-xl overflow-hidden shadow-lg relative flex justify-center items-center w-full aspect-video mobile-video">
-                <!-- 添加占位提示：当沙盒拦截视频时，能给用户明确的反馈 -->
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 p-6 text-center z-0">
-                    <p class="text-sm mb-1">正在加载 YouTube 播放器...</p>
-                    <p class="text-xs opacity-75">如果一直黑屏，说明当前的预览沙盒或您的浏览器插件拦截了该视频嵌入。</p>
+
+    <!-- 主体内容 -->
+    <main
+        class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:items-start relative mobile-layout"
+    >
+
+        <!-- ==========================================
+             第一部分：视频 + 课程简介
+             ========================================== -->
+
+        <div
+            class="order-1 lg:col-span-7 lg:col-start-1 lg:row-start-1 flex flex-col gap-4 w-full mobile-content-wrapper"
+        >
+
+            <!-- 视频播放器 -->
+            <div
+                class="bg-black rounded-xl overflow-hidden shadow-lg relative flex justify-center items-center w-full aspect-video mobile-video"
+            >
+
+                <!-- 占位提示 -->
+                <div
+                    class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 p-6 text-center z-0"
+                >
+                    <p class="text-sm mb-1">
+                        正在加载 YouTube 播放器...
+                    </p>
+
+                    <p class="text-xs opacity-75">
+                        如果一直黑屏，说明当前的预览沙盒或您的浏览器插件拦截了该视频嵌入。
+                    </p>
                 </div>
-                
-                <iframe id="youtube-player" class="absolute inset-0 w-full h-full z-10" 
-                        src="https://www.youtube-nocookie.com/embed/IcLJkrU5ucc?enablejsapi=1&playsinline=1&rel=0" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
+
+
+                <!-- 新的视频 -->
+                <iframe
+                    id="youtube-player"
+                    class="absolute inset-0 w-full h-full z-10"
+                    src="https://www.youtube-nocookie.com/embed/IcLJkrU5ucc?enablejsapi=1&playsinline=1&rel=0"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
                 </iframe>
+
             </div>
-            
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mobile-intro">
-                <h1 class="text-2xl font-bold mb-2 md:text-3xl">学习外语的方法与态度</h1>
+
+
+            <!-- 课程简介 -->
+            <div
+                class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mobile-intro"
+            >
+
+                <h1 class="text-2xl font-bold mb-2 md:text-3xl">
+                    学习外语的方法与态度
+                </h1>
+
                 <div class="flex items-center gap-4 text-sm text-gray-500 mt-2">
-                    <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded font-medium">Intermediate (中级)</span>
-                    <span><i data-lucide="tag" class="w-4 h-4 inline mr-1"></i>Education (教育)</span>
+
+                    <span
+                        class="bg-blue-50 text-blue-600 px-2 py-1 rounded font-medium"
+                    >
+                        Intermediate (中级)
+                    </span>
+
+                    <span>
+                        <i
+                            data-lucide="tag"
+                            class="w-4 h-4 inline mr-1">
+                        </i>
+                        Education (教育)
+                    </span>
+
                 </div>
+
                 <p class="mt-4 text-gray-600 text-sm md:text-base leading-relaxed">
                     在这节课中，康老师通过一个学生生病的故事，分享了生病时我们应该做什么，及运动和健康的关系。注意听康老师的发音，你可以点击右侧（或下方）的字幕来反复练习某一句！
                 </p>
+
                 <p class="text-gray-500 text-sm leading-relaxed">
                     Bu darsda Kang o‘qituvchi bir o‘quvchining kasal bo‘lishi haqidagi hikoya orqali kasal bo‘lganimizda nima qilishimiz kerakligi va sport va salomatlik o‘rtasidagi munosabat haqida o‘rtoqlashdi. O'qituvchi Kangning talaffuzini diqqat bilan tinglang, istalgan gapni qayta-qayta mashq qilish uchun o'ng tomondagi (yoki pastdagi) subtitrlarga bosishingiz mumkin!
                 </p>
+
             </div>
+
         </div>
 
-        <!-- 第二部分：交互式同步字幕区域 (移动端第二，PC端右侧悬浮，跨越两行) -->
-        <div class="order-2 lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:row-span-2 w-full flex flex-col h-[500px] lg:h-[calc(100vh-6rem)] lg:sticky lg:top-20 z-40 mobile-transcript">
-            <div class="bg-white rounded-t-xl p-4 border border-gray-100 border-b-0 flex justify-between items-center shadow-sm shrink-0">
+
+        <!-- ==========================================
+             第二部分：互动字幕
+             ========================================== -->
+
+        <div
+            class="order-2 lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:row-span-2 w-full flex flex-col h-[500px] lg:h-[calc(100vh-6rem)] lg:sticky lg:top-20 z-40 mobile-transcript"
+        >
+
+            <!-- 字幕顶部 -->
+            <div
+                class="bg-white rounded-t-xl p-4 border border-gray-100 border-b-0 flex justify-between items-center shadow-sm shrink-0"
+            >
+
                 <h2 class="font-bold flex items-center gap-2 text-lg">
-                    <i data-lucide="align-left" class="w-5 h-5 text-red-600"></i>
+
+                    <i
+                        data-lucide="align-left"
+                        class="w-5 h-5 text-red-600">
+                    </i>
+
                     互动字幕 (Transcript)
+
                 </h2>
-                <!-- 控制拼音显示的开关 -->
+
+
+                <!-- 拼音开关 -->
                 <label class="flex items-center cursor-pointer">
+
                     <div class="relative">
-                        <input type="checkbox" id="toggle-pinyin" class="sr-only" checked>
-                        <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors toggle-bg"></div>
-                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
+
+                        <input
+                            type="checkbox"
+                            id="toggle-pinyin"
+                            class="sr-only"
+                            checked
+                        >
+
+                        <div
+                            class="block bg-gray-200 w-10 h-6 rounded-full transition-colors toggle-bg">
+                        </div>
+
+                        <div
+                            class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform">
+                        </div>
+
                     </div>
-                    <span class="ml-2 text-sm font-medium text-gray-600">显示拼音</span>
+
+                    <span class="ml-2 text-sm font-medium text-gray-600">
+                        显示拼音
+                    </span>
+
                 </label>
+
             </div>
-            
-            <!-- 滚动的字幕列表 -->
-            <div id="transcript-container" class="bg-white border border-gray-100 rounded-b-xl shadow-sm flex-1 overflow-y-auto p-2 scroll-smooth mobile-transcript-list">
-                <!-- 字幕由 JavaScript 动态生成 -->
+
+
+            <!-- 字幕列表 -->
+            <div
+                id="transcript-container"
+                class="bg-white border border-gray-100 rounded-b-xl shadow-sm flex-1 overflow-y-auto p-2 scroll-smooth mobile-transcript-list"
+            >
+                <!-- JavaScript 动态生成 -->
             </div>
+
         </div>
 
-        <!-- 第三部分：动态生词列表区域 (移动端第三，PC端左下) -->
-        <div class="order-3 lg:col-span-7 lg:col-start-1 lg:row-start-2 w-full bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col mobile-vocab">
-            <h2 class="font-bold flex items-center gap-2 mb-4 text-lg border-b border-gray-100 pb-2">
-                <i data-lucide="book-a" class="w-5 h-5 text-red-600"></i>
+
+        <!-- ==========================================
+             第三部分：生词
+             ========================================== -->
+
+        <div
+            class="order-3 lg:col-span-7 lg:col-start-1 lg:row-start-2 w-full bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col mobile-vocab"
+        >
+
+            <h2
+                class="font-bold flex items-center gap-2 mb-4 text-lg border-b border-gray-100 pb-2"
+            >
+
+                <i
+                    data-lucide="book-a"
+                    class="w-5 h-5 text-red-600">
+                </i>
+
                 生词列表 (Vocabulary)
+
             </h2>
+
+
             <div class="pr-2">
-                <ul id="vocab-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
-                    <!-- 由 JavaScript 动态生成 -->
+
+                <ul
+                    id="vocab-container"
+                    class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4"
+                >
+                    <!-- JavaScript 动态生成 -->
                 </ul>
+
             </div>
+
         </div>
 
     </main>
 
-    <!-- 交互式词典弹窗 (Tooltip) - 浅蓝色半透明的毛玻璃样式 -->
-    <div id="dictionary-tooltip" class="fixed z-[100] bg-blue-50/90 backdrop-blur-md text-gray-800 rounded-lg shadow-md border border-blue-200 px-3 py-2 min-w-max transform -translate-x-1/2 pointer-events-none transition-all duration-200 opacity-0 invisible">
-        <div class="text-red-600 font-medium text-[11px] text-center leading-none mb-1.5" id="tt-pinyin"></div>
-        <div class="text-gray-900 font-bold text-sm text-center leading-none" id="tt-trans"></div>
+
+    <!-- ==========================================
+         互动词典 Tooltip
+         ========================================== -->
+
+    <div
+        id="dictionary-tooltip"
+        class="fixed z-[100] bg-blue-50/90 backdrop-blur-md text-gray-800 rounded-lg shadow-md border border-blue-200 px-3 py-2 min-w-max transform -translate-x-1/2 pointer-events-none transition-all duration-200 opacity-0 invisible"
+    >
+
+        <div
+            class="text-red-600 font-medium text-[11px] text-center leading-none mb-1.5"
+            id="tt-pinyin">
+        </div>
+
+        <div
+            class="text-gray-900 font-bold text-sm text-center leading-none"
+            id="tt-trans">
+        </div>
+
     </div>
 
+
     <script>
+
+        /* ==========================================
+           初始化图标
+           ========================================== */
+
         lucide.createIcons();
 
+
+        /* ==========================================
+           生词列表
+           共 28 个
+           ========================================== */
+
         const vocabulary = [
-                    { zh: '最近', pinyin: 'zuìjìn', uz: 'yaqinda', ru: 'в последнее время', en: 'lately; recently' },
-                    { zh: '常', pinyin: 'cháng', uz: 'tez-tez', ru: 'часто', en: 'often' },
-                    { zh: '体育馆', pinyin: 'tǐyùguǎn', uz: 'sport zali', ru: 'спортзал', en: 'gymnasium' },
-                    { zh: '习惯', pinyin: 'xíguàn', uz: "odat; o'rganib qolmoq", ru: 'привычка; привыкать', en: 'habit; be used to' },
-                    { zh: '胖', pinyin: 'pàng', uz: 'semiz', ru: 'толстый', en: 'fat' },
-                    { zh: '健康', pinyin: 'jiànkāng', uz: "sog'lom", ru: 'здоровый', en: 'healthy' },
-                    { zh: '以后', pinyin: 'yǐhòu', uz: 'keyin', ru: 'после', en: 'after; afterward' },
-                    { zh: '羽毛球', pinyin: 'yǔmáoqiú', uz: 'badminton', ru: 'бадминтон', en: 'badminton' },
-                    { zh: '耳朵', pinyin: 'ěrduo', uz: 'quloq', ru: 'ухо', en: 'ear' },
-                    { zh: '感冒', pinyin: 'gǎnmào', uz: 'shamollash', ru: 'простуда', en: 'catch a cold; cold' },
-                    { zh: '发烧', pinyin: 'fāshāo', uz: 'isitma chiqishi', ru: 'температура, жар', en: 'have a fever' },
-                    { zh: '低', pinyin: 'dī', uz: 'past', ru: 'низкий', en: 'low' },
-                    { zh: '关心', pinyin: 'guānxīn', uz: "g'amxo'rlik qilmoq", ru: 'заботиться', en: 'be concerned about' },
-                    { zh: '注意', pinyin: 'zhùyì', uz: "e'tibor bermoq", ru: 'обращать внимание', en: 'pay attention to' },
-                    { zh: '突然', pinyin: 'tūrán', uz: "to'satdan", ru: 'вдруг, внезапно', en: 'sudden' },
-                    { zh: '住院', pinyin: 'zhùyuàn', uz: 'kasalxonada yotmoq', ru: 'лежать в больнице', en: 'be in hospital' },
-                    { zh: '担心', pinyin: 'dānxīn', uz: 'xavotir olmoq', ru: 'беспокоиться', en: 'worry' },
-                    { zh: '腿', pinyin: 'tuǐ', uz: 'oyoq', ru: 'нога', en: 'leg' },
-                    { zh: '病人', pinyin: 'bìngrén', uz: 'bemor', ru: 'пациент', en: 'patient' },
-                    { zh: '差不多', pinyin: 'chàbuduō', uz: 'deyarli', ru: 'почти', en: 'almost; similar' },
-                    { zh: '得', pinyin: 'děi', uz: 'kerak, majbur', ru: 'должен, нужно', en: 'need; have to' },
-                    { zh: '开心', pinyin: 'kāixīn', uz: 'xursand', ru: 'радостный', en: 'happy' },
-                    { zh: '出院', pinyin: 'chūyuàn', uz: 'kasalxonadan chiqmoq', ru: 'выписаться из больницы', en: 'leave hospital' },
-                    { zh: '方法', pinyin: 'fāngfǎ', uz: 'usul', ru: 'метод', en: 'method' },
-                    { zh: '开', pinyin: 'kāi', uz: 'yozib bermoq (dori)', ru: 'выписывать (лекарство)', en: 'prescribe' },
-                    { zh: '其他', pinyin: 'qítā', uz: 'boshqa', ru: 'другой', en: 'other' },
-                    { zh: '种', pinyin: 'zhǒng', uz: 'tur, xil', ru: 'вид, тип', en: 'kind; type' },
-                    { zh: '心里', pinyin: 'xīnli', uz: "ko'ngil, yurak", ru: 'в душе, на сердце', en: 'mind; heart' }
+
+            {
+                zh: '最近',
+                pinyin: 'zuìjìn',
+                uz: 'yaqinda',
+                ru: 'в последнее время',
+                en: 'lately; recently'
+            },
+
+            {
+                zh: '常',
+                pinyin: 'cháng',
+                uz: 'tez-tez',
+                ru: 'часто',
+                en: 'often'
+            },
+
+            {
+                zh: '体育馆',
+                pinyin: 'tǐyùguǎn',
+                uz: 'sport zali',
+                ru: 'спортзал',
+                en: 'gymnasium'
+            },
+
+            {
+                zh: '习惯',
+                pinyin: 'xíguàn',
+                uz: "odat; o'rganib qolmoq",
+                ru: 'привычка; привыкать',
+                en: 'habit; be used to'
+            },
+
+            {
+                zh: '胖',
+                pinyin: 'pàng',
+                uz: 'semiz',
+                ru: 'толстый',
+                en: 'fat'
+            },
+
+            {
+                zh: '健康',
+                pinyin: 'jiànkāng',
+                uz: "sog'lom",
+                ru: 'здоровый',
+                en: 'healthy'
+            },
+
+            {
+                zh: '以后',
+                pinyin: 'yǐhòu',
+                uz: 'keyin',
+                ru: 'после',
+                en: 'after; afterward'
+            },
+
+            {
+                zh: '羽毛球',
+                pinyin: 'yǔmáoqiú',
+                uz: 'badminton',
+                ru: 'бадминтон',
+                en: 'badminton'
+            },
+
+            {
+                zh: '耳朵',
+                pinyin: 'ěrduo',
+                uz: 'quloq',
+                ru: 'ухо',
+                en: 'ear'
+            },
+
+            {
+                zh: '感冒',
+                pinyin: 'gǎnmào',
+                uz: 'shamollash',
+                ru: 'простуда',
+                en: 'catch a cold; cold'
+            },
+
+            {
+                zh: '发烧',
+                pinyin: 'fāshāo',
+                uz: 'isitma chiqishi',
+                ru: 'температура, жар',
+                en: 'have a fever'
+            },
+
+            {
+                zh: '低',
+                pinyin: 'dī',
+                uz: 'past',
+                ru: 'низкий',
+                en: 'low'
+            },
+
+            {
+                zh: '关心',
+                pinyin: 'guānxīn',
+                uz: "g'amxo'rlik qilmoq",
+                ru: 'заботиться',
+                en: 'be concerned about'
+            },
+
+            {
+                zh: '注意',
+                pinyin: 'zhùyì',
+                uz: "e'tibor bermoq",
+                ru: 'обращать внимание',
+                en: 'pay attention to'
+            },
+
+            {
+                zh: '突然',
+                pinyin: 'tūrán',
+                uz: "to'satdan",
+                ru: 'вдруг, внезапно',
+                en: 'sudden'
+            },
+
+            {
+                zh: '住院',
+                pinyin: 'zhùyuàn',
+                uz: 'kasalxonada yotmoq',
+                ru: 'лежать в больнице',
+                en: 'be in hospital'
+            },
+
+            {
+                zh: '担心',
+                pinyin: 'dānxīn',
+                uz: 'xavotir olmoq',
+                ru: 'беспокоиться',
+                en: 'worry'
+            },
+
+            {
+                zh: '腿',
+                pinyin: 'tuǐ',
+                uz: 'oyoq',
+                ru: 'нога',
+                en: 'leg'
+            },
+
+            {
+                zh: '病人',
+                pinyin: 'bìngrén',
+                uz: 'bemor',
+                ru: 'пациент',
+                en: 'patient'
+            },
+
+            {
+                zh: '差不多',
+                pinyin: 'chàbuduō',
+                uz: 'deyarli',
+                ru: 'почти',
+                en: 'almost; similar'
+            },
+
+            {
+                zh: '得',
+                pinyin: 'děi',
+                uz: 'kerak, majbur',
+                ru: 'должен, нужно',
+                en: 'need; have to'
+            },
+
+            {
+                zh: '开心',
+                pinyin: 'kāixīn',
+                uz: 'xursand',
+                ru: 'радостный',
+                en: 'happy'
+            },
+
+            {
+                zh: '出院',
+                pinyin: 'chūyuàn',
+                uz: 'kasalxonadan chiqmoq',
+                ru: 'выписаться из больницы',
+                en: 'leave hospital'
+            },
+
+            {
+                zh: '方法',
+                pinyin: 'fāngfǎ',
+                uz: 'usul',
+                ru: 'метод',
+                en: 'method'
+            },
+
+            {
+                zh: '开',
+                pinyin: 'kāi',
+                uz: 'yozib bermoq (dori)',
+                ru: 'выписывать (лекарство)',
+                en: 'prescribe'
+            },
+
+            {
+                zh: '其他',
+                pinyin: 'qítā',
+                uz: 'boshqa',
+                ru: 'другой',
+                en: 'other'
+            },
+
+            {
+                zh: '种',
+                pinyin: 'zhǒng',
+                uz: 'tur, xil',
+                ru: 'вид, тип',
+                en: 'kind; type'
+            },
+
+            {
+                zh: '心里',
+                pinyin: 'xīnli',
+                uz: "ko'ngil, yurak",
+                ru: 'в душе, на сердце',
+                en: 'mind; heart'
+            }
+
         ];
 
-        const vocabContainer = document.getElementById('vocab-container');
-        vocabularyData.forEach(item => {
+
+        /* ==========================================
+           渲染生词
+           ========================================== */
+
+        const vocabContainer =
+            document.getElementById('vocab-container');
+
+
+        vocabulary.forEach((item, index) => {
+
             const li = document.createElement('li');
-            li.className = "flex items-start gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100 hover:border-red-200 hover:bg-red-50 transition-colors group";
+
+            li.className =
+                "flex items-start gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100 hover:border-red-200 hover:bg-red-50 transition-colors group";
+
+
             li.innerHTML = `
-                <div class="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600 text-xs font-bold group-hover:bg-red-600 group-hover:text-white transition-colors mt-0.5">
-                    ${item.no}
+
+                <div
+                    class="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600 text-xs font-bold group-hover:bg-red-600 group-hover:text-white transition-colors mt-0.5"
+                >
+                    ${index + 1}
                 </div>
-                <div class="flex flex-col">
-                    <div class="flex items-end gap-2">
-                        <span class="font-bold text-lg text-gray-900">${item.text}</span>
-                        <span class="text-sm text-gray-500 mb-0.5">${item.py}</span>
+
+                <div class="flex flex-col min-w-0">
+
+                    <div class="flex items-end gap-2 flex-wrap">
+
+                        <span class="font-bold text-lg text-gray-900">
+                            ${item.zh}
+                        </span>
+
+                        <span class="text-sm text-gray-500 mb-0.5">
+                            ${item.pinyin}
+                        </span>
+
                     </div>
-                    <span class="text-sm text-gray-600 mt-1">${item.tr}</span>
+
+                    <span class="text-sm text-gray-600 mt-1">
+                        ${item.uz}
+                    </span>
+
+                    <span class="text-xs text-gray-400 mt-0.5">
+                        ${item.ru}
+                    </span>
+
                 </div>
             `;
+
             vocabContainer.appendChild(li);
+
         });
 
-        const exactSubtitleData = [
-    {
-        start: 0.0, end: 4.2,
-        words: [
-            { text: "大家好", start: 0.0, end: 0.8, py: "dà jiā hǎo", tr: "barchaga salom / всем привет" },
-            { text: "欢迎", start: 0.8, end: 1.4, py: "huān yíng", tr: "xush kelibsiz / добро пожаловать" },
-            { text: "来到", start: 1.4, end: 1.9, py: "lái dào", tr: "-ga / в" },
-            { text: "康老师", start: 1.9, end: 2.8, py: "Kāng lǎo shī", tr: "Kang o'qituvchining / учителя Кан" },
-            { text: "的", start: 2.8, end: 3.1, py: "de", tr: "- / (суффикс)" },
-            { text: "汉语", start: 3.1, end: 3.6, py: "hàn yǔ", tr: "xitoy tili / китайский" },
-            { text: "播客", start: 3.6, end: 4.2, py: "bō kè", tr: "podkastiga / подкаст" }
-        ]
-    },
-    {
-        start: 4.2, end: 8.3,
-        words: [
-            { text: "最近", start: 4.2, end: 4.7, py: "zuì jìn", tr: "yaqinda / недавно" },
-            { text: "我", start: 4.7, end: 5.0, py: "wǒ", tr: "men / я" },
-            { text: "常常", start: 5.0, end: 5.7, py: "cháng cháng", tr: "tez-tez / часто" },
-            { text: "去", start: 5.7, end: 6.0, py: "qù", tr: "boraman / хожу" },
-            { text: "体育馆", start: 6.0, end: 7.0, py: "tǐ yù guǎn", tr: "sport zaliga / в спортзал" },
-            { text: "打", start: 7.0, end: 7.3, py: "dǎ", tr: "o'ynash / играть" },
-            { text: "羽毛球", start: 7.3, end: 8.3, py: "yǔ máo qiú", tr: "badminton / в бадминтон" }
-        ]
-    },
-    {
-        start: 8.3, end: 13.7,
-        words: [
-            { text: "以前", start: 8.3, end: 9.0, py: "yǐ qián", tr: "oldin / раньше" },
-            { text: "我", start: 9.0, end: 9.3, py: "wǒ", tr: "men / я" },
-            { text: "不太", start: 9.3, end: 10.0, py: "bú tài", tr: "unchalik ...-mas / не очень" },
-            { text: "运动", start: 10.0, end: 10.7, py: "yùn dòng", tr: "sport bilan shug'ullan / занималась спортом" },
-            { text: "但是", start: 10.7, end: 11.3, py: "dàn shì", tr: "lekin / но" },
-            { text: "现在", start: 11.3, end: 12.0, py: "xiàn zài", tr: "hozir / сейчас" },
-            { text: "慢慢", start: 12.0, end: 12.7, py: "màn màn", tr: "asta-sekin / постепенно" },
-            { text: "习惯了", start: 12.7, end: 13.7, py: "xí guàn le", tr: "o'rganib qoldim / привыкла" }
-        ]
-    },
-    {
-        start: 13.7, end: 18.7,
-        words: [
-            { text: "有人", start: 13.7, end: 14.3, py: "yǒu rén", tr: "kimdir / кто-то" },
-            { text: "说", start: 14.3, end: 14.7, py: "shuō", tr: "aytadi / говорит" },
-            { text: "康老师", start: 14.7, end: 15.7, py: "Kāng lǎo shī", tr: "Kang o'qituvchi / учитель Кан" },
-            { text: "你", start: 15.7, end: 16.0, py: "nǐ", tr: "sen / вы" },
-            { text: "最近", start: 16.0, end: 16.7, py: "zuì jìn", tr: "yaqinda / в последнее время" },
-            { text: "是不是", start: 16.7, end: 17.8, py: "shì bu shì", tr: "shunday emasmi / разве не" },
-            { text: "胖了", start: 17.8, end: 18.7, py: "pàng le", tr: "to'lishib ketding / поправились" }
-        ]
-    },
-    {
-        start: 18.7, end: 24.2,
-        words: [
-            { text: "我", start: 18.7, end: 19.1, py: "wǒ", tr: "men / я" },
-            { text: "说", start: 19.1, end: 19.5, py: "shuō", tr: "deyman / говорю" },
-            { text: "胖", start: 19.5, end: 19.9, py: "pàng", tr: "to'lishish / поправиться" },
-            { text: "一点", start: 19.9, end: 20.8, py: "yì diǎn", tr: "biroz / немного" },
-            { text: "没关系", start: 20.8, end: 22.1, py: "méi guān xi", tr: "hech qisi yo'q / ничего страшного" },
-            { text: "健康", start: 22.1, end: 22.9, py: "jiàn kāng", tr: "sog'lik / здоровье" },
-            { text: "最重要", start: 22.9, end: 24.2, py: "zuì zhòng yào", tr: "eng muhim / самое главное" }
-        ]
-    },
-    {
-        start: 24.2, end: 31.6,
-        words: [
-            { text: "有一天", start: 24.2, end: 25.4, py: "yǒu yì tiān", tr: "bir kuni / однажды" },
-            { text: "打完球", start: 25.4, end: 26.4, py: "dǎ wán qiú", tr: "o'ynab bo'lgach / после игры" },
-            { text: "以后", start: 26.4, end: 27.1, py: "yǐ hòu", tr: "keyin / после" },
-            { text: "我", start: 27.1, end: 27.4, py: "wǒ", tr: "men / я" },
-            { text: "突然", start: 27.4, end: 28.1, py: "tū rán", tr: "to'satdan / вдруг" },
-            { text: "接到", start: 28.1, end: 28.9, py: "jiē dào", tr: "oldim / получила" },
-            { text: "了", start: 28.9, end: 29.2, py: "le", tr: "- / (частица)" },
-            { text: "一个", start: 29.2, end: 29.9, py: "yí gè", tr: "bitta / один" },
-            { text: "学生", start: 29.9, end: 30.6, py: "xué shēng", tr: "o'quvchi / студента" },
-            { text: "的", start: 30.6, end: 30.9, py: "de", tr: "ning / (суффикс)" },
-            { text: "电话", start: 30.9, end: 31.6, py: "diàn huà", tr: "qo'ng'iroq / звонок" }
-        ]
-    },
-    {
-        start: 31.6, end: 39.0,
-        words: [
-            { text: "他", start: 31.6, end: 32.0, py: "tā", tr: "u / он" },
-            { text: "告诉", start: 32.0, end: 32.8, py: "gào su", tr: "aytdi / сказал" },
-            { text: "我", start: 32.8, end: 33.2, py: "wǒ", tr: "menga / мне" },
-            { text: "他", start: 33.2, end: 33.6, py: "tā", tr: "uning / он" },
-            { text: "感冒了", start: 33.6, end: 34.7, py: "gǎn mào le", tr: "shamollaganini / простудился" },
-            { text: "而且", start: 34.7, end: 35.5, py: "ér qiě", tr: "va / и к тому же" },
-            { text: "还", start: 35.5, end: 35.9, py: "hái", tr: "yana / еще" },
-            { text: "发烧", start: 35.9, end: 36.7, py: "fā shāo", tr: "isitmasi chiqayotganini / температурит" },
-            { text: "现在", start: 36.7, end: 37.4, py: "xiàn zài", tr: "hozir / сейчас" },
-            { text: "正在", start: 37.4, end: 38.2, py: "zhèng zài", tr: "ayni paytda / в данный момент" },
-            { text: "住院", start: 38.2, end: 39.0, py: "zhù yuàn", tr: "kasalxonada / лежит в больнице" }
-        ]
-    },
-    {
-        start: 39.0, end: 45.2,
-        words: [
-            { text: "我", start: 39.0, end: 39.4, py: "wǒ", tr: "men / я" },
-            { text: "听了", start: 39.4, end: 40.2, py: "tīng le", tr: "eshitib / услышав" },
-            { text: "以后", start: 40.2, end: 41.1, py: "yǐ hòu", tr: "keyin / после" },
-            { text: "很", start: 41.1, end: 41.5, py: "hěn", tr: "juda / очень" },
-            { text: "担心", start: 41.5, end: 42.3, py: "dān xīn", tr: "xavotir oldim / заволновалась" },
-            { text: "马上", start: 42.3, end: 43.1, py: "mǎ shàng", tr: "darhol / сразу же" },
-            { text: "去", start: 43.1, end: 43.5, py: "qù", tr: "bordim / поехала" },
-            { text: "医院", start: 43.5, end: 44.4, py: "yī yuàn", tr: "kasalxonaga / в больницу" },
-            { text: "看", start: 44.4, end: 44.8, py: "kàn", tr: "ko'rishga / навестить" },
-            { text: "他", start: 44.8, end: 45.2, py: "tā", tr: "uni / его" }
-        ]
-    },
-    {
-        start: 45.2, end: 54.4,
-        words: [
-            { text: "到了", start: 45.2, end: 46.0, py: "dào le", tr: "yetib borgach / добравшись" },
-            { text: "医院", start: 46.0, end: 46.8, py: "yī yuàn", tr: "kasalxonaga / до больницы" },
-            { text: "我", start: 46.8, end: 47.2, py: "wǒ", tr: "men / я" },
-            { text: "看到", start: 47.2, end: 48.0, py: "kàn dào", tr: "ko'rdim / увидела" },
-            { text: "我", start: 48.0, end: 48.4, py: "wǒ", tr: "mening / моего" },
-            { text: "的", start: 48.4, end: 48.8, py: "de", tr: "- / (суффикс)" },
-            { text: "学生", start: 48.8, end: 49.6, py: "xué shēng", tr: "o'quvchim / студента" },
-            { text: "躺在", start: 49.6, end: 50.4, py: "tǎng zài", tr: "yotganini / лежащего на" },
-            { text: "床上", start: 50.4, end: 51.2, py: "chuáng shàng", tr: "karavotda / кровати" },
-            { text: "旁边", start: 51.2, end: 52.0, py: "páng biān", tr: "yonida / рядом" },
-            { text: "还有", start: 52.0, end: 52.8, py: "hái yǒu", tr: "yana bor edi / еще были" },
-            { text: "几个", start: 52.8, end: 53.6, py: "jǐ gè", tr: "bir necha / несколько" },
-            { text: "病人", start: 53.6, end: 54.4, py: "bìng rén", tr: "bemorlar / пациентов" }
-        ]
-    },
-    {
-        start: 54.4, end: 62.0,
-        words: [
-            { text: "他", start: 54.4, end: 54.8, py: "tā", tr: "uning / его" },
-            { text: "的", start: 54.8, end: 55.2, py: "de", tr: "ning / (суффикс)" },
-            { text: "脸色", start: 55.2, end: 56.1, py: "liǎn sè", tr: "yuzi / цвет лица" },
-            { text: "很", start: 56.1, end: 56.5, py: "hěn", tr: "juda / очень" },
-            { text: "不好", start: 56.5, end: 57.3, py: "bù hǎo", tr: "yomon / плохой" },
-            { text: "腿", start: 57.3, end: 57.7, py: "tuǐ", tr: "oyog'i / нога" },
-            { text: "也", start: 57.7, end: 58.1, py: "yě", tr: "ham / тоже" },
-            { text: "有", start: 58.1, end: 58.5, py: "yǒu", tr: "bor edi / имеет" },
-            { text: "一点", start: 58.5, end: 59.4, py: "yì diǎn", tr: "biroz / немного" },
-            { text: "疼", start: 59.4, end: 59.8, py: "téng", tr: "og'riq / боли" },
-            { text: "耳朵", start: 59.8, end: 60.6, py: "ěr duo", tr: "qulog'i / ухо" },
-            { text: "也", start: 60.6, end: 61.0, py: "yě", tr: "ham / тоже" },
-            { text: "有点", start: 61.0, end: 61.7, py: "yǒu diǎn", tr: "biroz / немного" },
-            { text: "红", start: 61.7, end: 62.0, py: "hóng", tr: "qizargan / красное" }
-        ]
-    },
-    {
-        start: 62.0, end: 65.3,
-        words: [
-            { text: "我", start: 62.0, end: 62.3, py: "wǒ", tr: "men / я" },
-            { text: "问", start: 62.3, end: 62.7, py: "wèn", tr: "so'radim / спросила" },
-            { text: "他", start: 62.7, end: 63.0, py: "tā", tr: "undan / его" },
-            { text: "你", start: 63.0, end: 63.3, py: "nǐ", tr: "sening / твоя" },
-            { text: "的", start: 63.3, end: 63.7, py: "de", tr: "- / (суффикс)" },
-            { text: "体温", start: 63.7, end: 64.3, py: "tǐ wēn", tr: "tana harorating / температура" },
-            { text: "高不高", start: 64.3, end: 65.3, py: "gāo bù gāo", tr: "balandmi / высокая ли" }
-        ]
-    },
-    {
-        start: 65.3, end: 70.7,
-        words: [
-            { text: "他", start: 65.3, end: 65.7, py: "tā", tr: "u / он" },
-            { text: "说", start: 65.7, end: 66.0, py: "shuō", tr: "dedi / сказал" },
-            { text: "已经", start: 66.0, end: 66.7, py: "yǐ jīng", tr: "allaqachon / уже" },
-            { text: "低", start: 66.7, end: 67.0, py: "dī", tr: "pasaygan / снизилась" },
-            { text: "一点", start: 67.0, end: 67.8, py: "yì diǎn", tr: "biroz / немного" },
-            { text: "了", start: 67.8, end: 68.2, py: "le", tr: "- / (частица)" },
-            { text: "差不多", start: 68.2, end: 69.5, py: "chà bu duō", tr: "deyarli / почти" },
-            { text: "正常了", start: 69.5, end: 70.7, py: "zhèng cháng le", tr: "me'yorida / в норме" }
-        ]
-    },
-    {
-        start: 70.7, end: 76.5,
-        words: [
-            { text: "我", start: 70.7, end: 71.1, py: "wǒ", tr: "men / я" },
-            { text: "告诉", start: 71.1, end: 71.9, py: "gào su", tr: "aytdim / сказала" },
-            { text: "他", start: 71.9, end: 72.4, py: "tā", tr: "unga / ему" },
-            { text: "你", start: 72.4, end: 72.8, py: "nǐ", tr: "sen / ты" },
-            { text: "现在", start: 72.8, end: 73.6, py: "xiàn zài", tr: "hozir / сейчас" },
-            { text: "得", start: 73.6, end: 74.0, py: "děi", tr: "-shing kerak / должен" },
-            { text: "好好", start: 74.0, end: 74.6, py: "hǎo hao", tr: "yaxshilab / хорошенько" },
-            { text: "休息", start: 74.6, end: 75.3, py: "xiū xi", tr: "dam olish / отдохнуть" },
-            { text: "注意", start: 75.3, end: 75.9, py: "zhù yì", tr: "e'tibor ber / береги" },
-            { text: "身体", start: 75.9, end: 76.5, py: "shēn tǐ", tr: "sog'likka / здоровье" }
-        ]
-    },
-    {
-        start: 76.5, end: 86.6,
-        words: [
-            { text: "你看", start: 76.5, end: 77.2, py: "nǐ kàn", tr: "qara / посмотри" },
-            { text: "平时的", start: 77.2, end: 78.1, py: "píng shí de", tr: "odatdagi / обычные" },
-            { text: "运动", start: 78.1, end: 78.7, py: "yùn dòng", tr: "sport / занятия спортом" },
-            { text: "当然", start: 78.7, end: 79.4, py: "dāng rán", tr: "albatta / конечно" },
-            { text: "很好", start: 79.4, end: 80.0, py: "hěn hǎo", tr: "juda yaxshi / очень хорошо" },
-            { text: "但是", start: 80.0, end: 80.8, py: "dàn shì", tr: "lekin / но" },
-            { text: "身体", start: 80.8, end: 81.6, py: "shēn tǐ", tr: "tana / тело" },
-            { text: "不舒服", start: 81.6, end: 82.7, py: "bù shū fu", tr: "noqulay / неважно себя чувствует" },
-            { text: "的", start: 82.7, end: 83.1, py: "de", tr: "- / (суффикс)" },
-            { text: "时候", start: 83.1, end: 83.9, py: "shí hou", tr: "paytida / когда" },
-            { text: "不能", start: 83.9, end: 84.7, py: "bù néng", tr: "mumkin emas / нельзя" },
-            { text: "只", start: 84.7, end: 85.1, py: "zhǐ", tr: "faqat / только" },
-            { text: "想着", start: 85.1, end: 85.8, py: "xiǎng zhe", tr: "o'ylash / думать о" },
-            { text: "运动", start: 85.8, end: 86.6, py: "yùn dòng", tr: "sport / спорте" }
-        ]
-    },
-    {
-        start: 86.6, end: 95.1,
-        words: [
-            { text: "医生", start: 86.6, end: 87.3, py: "yī shēng", tr: "shifokor / врач" },
-            { text: "也", start: 87.3, end: 87.6, py: "yě", tr: "ham / тоже" },
-            { text: "很", start: 87.6, end: 87.8, py: "hěn", tr: "juda / очень" },
-            { text: "关心", start: 87.8, end: 88.4, py: "guān xīn", tr: "g'amxo'rlik qildi / позаботился о" },
-            { text: "他", start: 88.4, end: 88.7, py: "tā", tr: "unga / нем" },
-            { text: "给", start: 88.7, end: 88.9, py: "gěi", tr: "uchun / для" },
-            { text: "他", start: 88.9, end: 89.2, py: "tā", tr: "unga / него" },
-            { text: "开了", start: 89.2, end: 89.8, py: "kāi le", tr: "yozib berdi / выписал" },
-            { text: "一些", start: 89.8, end: 90.3, py: "yì xiē", tr: "ba'zi / некоторые" },
-            { text: "药", start: 90.3, end: 90.6, py: "yào", tr: "dorilar / лекарства" },
-            { text: "还", start: 90.6, end: 90.9, py: "hái", tr: "yana / еще" },
-            { text: "告诉", start: 90.9, end: 91.4, py: "gào su", tr: "aytdi / сказал" },
-            { text: "他", start: 91.4, end: 91.7, py: "tā", tr: "unga / ему" },
-            { text: "一些", start: 91.7, end: 92.4, py: "yì xiē", tr: "ba'zi / некоторые" },
-            { text: "恢复", start: 92.4, end: 93.2, py: "huī fù", tr: "tiklanish / восстановления" },
-            { text: "身体", start: 93.2, end: 93.9, py: "shēn tǐ", tr: "tanani / здоровья" },
-            { text: "的", start: 93.9, end: 94.3, py: "de", tr: "- / (суффикс)" },
-            { text: "方法", start: 94.3, end: 95.1, py: "fāng fǎ", tr: "usullarini / методы" }
-        ]
-    },
-    {
-        start: 95.1, end: 101.7,
-        words: [
-            { text: "我", start: 95.1, end: 95.5, py: "wǒ", tr: "mening / мой" },
-            { text: "的", start: 95.5, end: 95.9, py: "de", tr: "- / (суффикс)" },
-            { text: "学生", start: 95.9, end: 96.7, py: "xué shēng", tr: "o'quvchim / студент" },
-            { text: "笑着", start: 96.7, end: 97.4, py: "xiào zhe", tr: "kulib / с улыбкой" },
-            { text: "说", start: 97.4, end: 97.8, py: "shuō", tr: "dedi / сказал" },
-            { text: "看来", start: 97.8, end: 98.6, py: "kàn lái", tr: "aftidan / похоже" },
-            { text: "以后", start: 98.6, end: 99.3, py: "yǐ hòu", tr: "kelajakda / в будущем" },
-            { text: "我", start: 99.3, end: 99.7, py: "wǒ", tr: "men / я" },
-            { text: "得", start: 99.7, end: 100.0, py: "děi", tr: "-şim kerak / должен" },
-            { text: "听", start: 100.0, end: 100.3, py: "tīng", tr: "eshitishim / слушать" },
-            { text: "老师", start: 100.3, end: 101.0, py: "lǎo shī", tr: "o'qituvchining / учителя" },
-            { text: "的", start: 101.0, end: 101.3, py: "de", tr: "- / (суффикс)" },
-            { text: "话", start: 101.3, end: 101.7, py: "huà", tr: "gapini / слова" }
-        ]
-    },
-    {
-        start: 101.7, end: 102.7,
-        words: [
-            { text: "我", start: 101.7, end: 102.0, py: "wǒ", tr: "men / я" },
-            { text: "说", start: 102.0, end: 102.3, py: "shuō", tr: "dedim / сказала" },
-            { text: "对", start: 102.3, end: 102.7, py: "duì", tr: "to'g'ri / правильно" }
-        ]
-    },
-    {
-        start: 102.7, end: 109.4,
-        words: [
-            { text: "除了", start: 102.7, end: 103.3, py: "chú le", tr: "-dan tashqari / кроме" },
-            { text: "运动", start: 103.3, end: 104.0, py: "yùn dòng", tr: "sport / спорта" },
-            { text: "我们", start: 104.0, end: 104.7, py: "wǒ men", tr: "bizda / у нас" },
-            { text: "还有", start: 104.7, end: 105.4, py: "hái yǒu", tr: "yana bor / еще есть" },
-            { text: "很多种", start: 105.4, end: 106.5, py: "hěn duō zhǒng", tr: "juda ko'p turdagi / много видов" },
-            { text: "方法", start: 106.5, end: 107.2, py: "fāng fǎ", tr: "usullar / методов" },
-            { text: "可以", start: 107.2, end: 107.9, py: "kě yǐ", tr: "mumkin / можно" },
-            { text: "保持", start: 107.9, end: 108.7, py: "bǎo chí", tr: "saqlash / поддерживать" },
-            { text: "健康", start: 108.7, end: 109.4, py: "jiàn kāng", tr: "sog'likni / здоровье" }
-        ]
-    },
-    {
-        start: 109.4, end: 119.1,
-        words: [
-            { text: "最重要", start: 109.4, end: 110.5, py: "zuì zhòng yào", tr: "eng muhim / самое главное" },
-            { text: "是", start: 110.9, end: 111.3, py: "shì", tr: "-dir / это" },
-            { text: "身体", start: 111.3, end: 112.0, py: "shēn tǐ", tr: "tana / организм" },
-            { text: "不舒服", start: 112.0, end: 113.3, py: "bù shū fu", tr: "noqulay / не в порядке" },
-            { text: "时候", start: 113.8, end: 114.7, py: "shí hou", tr: "paytida / когда" },
-            { text: "要", start: 114.7, end: 115.1, py: "yào", tr: "kerak / нужно" },
-            { text: "及时", start: 115.1, end: 116.0, py: "jí shí", tr: "o'z vaqtida / вовремя" },
-            { text: "休息", start: 116.0, end: 116.9, py: "xiū xi", tr: "dam olish / отдыхать" },
-            { text: "及时", start: 116.9, end: 117.8, py: "jí shí", tr: "o'z vaqtida / вовремя" },
-            { text: "看医生", start: 117.8, end: 119.1, py: "kàn yī shēng", tr: "shifokorga ko'rinish / обратиться к врачу" }
-        ]
-    },
-    {
-        start: 119.1, end: 122.7,
-        words: [
-            { text: "几天", start: 119.1, end: 120.0, py: "jǐ tiān", tr: "bir necha kun / несколько дней" },
-            { text: "以后", start: 120.0, end: 120.7, py: "yǐ hòu", tr: "keyin / спустя" },
-            { text: "他", start: 120.7, end: 121.0, py: "tā", tr: "u / он" },
-            { text: "终于", start: 121.0, end: 121.7, py: "zhōng yú", tr: "nihoyat / наконец" },
-            { text: "出院了", start: 121.7, end: 122.7, py: "chū yuàn le", tr: "kasalxonadan chiqdi / выписался из больницы" }
-        ]
-    },
-    {
-        start: 122.7, end: 132.3,
-        words: [
-            { text: "看到", start: 122.7, end: 123.3, py: "kàn dào", tr: "ko'rib / увидев, что" },
-            { text: "我", start: 123.3, end: 123.7, py: "wǒ", tr: "mening / мой" },
-            { text: "学生", start: 124.0, end: 124.7, py: "xué shēng", tr: "o'quvchim / студент" },
-            { text: "又", start: 124.7, end: 125.0, py: "yòu", tr: "yana / снова" },
-            { text: "能", start: 125.0, end: 125.3, py: "néng", tr: "ola / может" },
-            { text: "开心", start: 125.3, end: 126.0, py: "kāi xīn", tr: "xursand / радостно" },
-            { text: "地", start: 126.0, end: 126.5, py: "de", tr: "bo'lib / (суффикс наречия)" },
-            { text: "走路", start: 126.5, end: 127.6, py: "zǒu lù", tr: "yurishini / ходить" },
-            { text: "我", start: 127.6, end: 128.1, py: "wǒ", tr: "mening / мое" },
-            { text: "心里", start: 128.6, end: 129.7, py: "xīn lǐ", tr: "qalbim / сердце" },
-            { text: "也", start: 129.7, end: 130.2, py: "yě", tr: "ham / тоже" },
-            { text: "特别", start: 130.2, end: 131.3, py: "tè bié", tr: "juda / особенно" },
-            { text: "开心", start: 131.3, end: 132.3, py: "kāi xīn", tr: "xursand / радо" }
-        ]
-    },
-    {
-        start: 132.3, end: 139.3,
-        words: [
-            { text: "所以", start: 132.3, end: 133.4, py: "suǒ yǐ", tr: "shuning uchun / поэтому" },
-            { text: "最近", start: 133.4, end: 134.4, py: "zuì jìn", tr: "yaqinda / в последнее время" },
-            { text: "我", start: 134.4, end: 134.9, py: "wǒ", tr: "men / я" },
-            { text: "越来越", start: 134.9, end: 136.3, py: "yuè lái yuè", tr: "borgan sari / все больше и больше" },
-            { text: "觉得", start: 136.3, end: 136.9, py: "jué de", tr: "his qilyapman / чувствую" },
-            { text: "健康", start: 136.9, end: 137.5, py: "jiàn kāng", tr: "sog'lik / здоровье" },
-            { text: "不是", start: 137.5, end: 138.1, py: "bú shì", tr: "emas / не" },
-            { text: "一件", start: 138.1, end: 138.7, py: "yí jiàn", tr: "bitta / одно" },
-            { text: "小事", start: 138.7, end: 139.3, py: "xiǎo shì", tr: "kichik narsa / пустяк" }
-        ]
-    },
-    {
-        start: 139.3, end: 148.7,
-        words: [
-            { text: "我们", start: 139.3, end: 139.9, py: "wǒ men", tr: "biz / мы" },
-            { text: "平时", start: 139.9, end: 140.5, py: "píng shí", tr: "odatda / обычно" },
-            { text: "可以", start: 140.5, end: 141.1, py: "kě yǐ", tr: "mumkin / можем" },
-            { text: "运动", start: 141.1, end: 141.7, py: "yùn dòng", tr: "sport bilan shug'ullanish / заниматься спортом" },
-            { text: "但是", start: 141.7, end: 142.3, py: "dàn shì", tr: "lekin / но" },
-            { text: "也", start: 142.3, end: 142.7, py: "yě", tr: "ham / также" },
-            { text: "要", start: 142.7, end: 143.0, py: "yào", tr: "kerak / должны" },
-            { text: "学会", start: 143.0, end: 143.7, py: "xué huì", tr: "o'rganishimiz / научиться" },
-            { text: "照顾", start: 143.7, end: 144.3, py: "zhào gù", tr: "g'amxo'rlik qilishni / заботиться о" },
-            { text: "自己", start: 144.3, end: 145.0, py: "zì jǐ", tr: "o'zimizga / себе" },
-            { text: "关心", start: 145.0, end: 145.7, py: "guān xīn", tr: "g'amxo'rlik qilish / заботиться о" },
-            { text: "自己", start: 145.7, end: 146.3, py: "zì jǐ", tr: "o'zimizga / себе" },
-            { text: "也", start: 146.3, end: 146.7, py: "yě", tr: "ham / и" },
-            { text: "关心", start: 146.7, end: 147.3, py: "guān xīn", tr: "g'amxo'rlik qilish / заботиться о" },
-            { text: "身边", start: 147.3, end: 148.0, py: "shēn biān", tr: "yonimizdagi / окружающих" },
-            { text: "的", start: 148.0, end: 148.4, py: "de", tr: "- / (суффикс)" },
-            { text: "人", start: 148.4, end: 148.7, py: "rén", tr: "odamlarga / людях" }
-        ]
-    },
-    {
-        start: 148.7, end: 157.6,
-        words: [
-            { text: "好了", start: 148.7, end: 149.4, py: "hǎo le", tr: "bo'ldi / ладно" },
-            { text: "今天", start: 149.4, end: 150.1, py: "jīn tiān", tr: "bugungi / сегодняшний" },
-            { text: "小故事", start: 150.5, end: 151.5, py: "xiǎo gù shì", tr: "hikoyamiz / рассказ" },
-            { text: "就", start: 151.5, end: 151.9, py: "jiù", tr: "shunday qilib / так" },
-            { text: "分享", start: 151.9, end: 152.6, py: "fēn xiǎng", tr: "baham ko'rdik / поделилась" },
-            { text: "到这里", start: 152.6, end: 153.6, py: "dào zhè lǐ", tr: "shu yergacha / до этого места" },
-            { text: "我们", start: 153.6, end: 155.0, py: "wǒ men", tr: "biz / мы" },
-            { text: "下次", start: 155.0, end: 157.0, py: "xià cì", tr: "keyingi safar / в следующий раз" },
-            { text: "再见", start: 157.0, end: 157.6, py: "zài jiàn", tr: "ko'rishguncha / увидимся" }
-        ]
-    }
-];
 
-        const container = document.getElementById('transcript-container');
+        /* ==========================================
+           字幕数据
+           ========================================== */
+
+        const transcriptData = [
+
+            {
+                start: 0.0,
+                end: 4.2,
+                words: [
+                    { text: "大家好", start: 0.0, end: 0.8, py: "dà jiā hǎo", tr: "barchaga salom / всем привет" },
+                    { text: "欢迎", start: 0.8, end: 1.4, py: "huān yíng", tr: "xush kelibsiz / добро пожаловать" },
+                    { text: "来到", start: 1.4, end: 1.9, py: "lái dào", tr: "-ga / в" },
+                    { text: "康老师", start: 1.9, end: 2.8, py: "Kāng lǎo shī", tr: "Kang o'qituvchining / учителя Кан" },
+                    { text: "的", start: 2.8, end: 3.1, py: "de", tr: "- / (суффикс)" },
+                    { text: "汉语", start: 3.1, end: 3.6, py: "hàn yǔ", tr: "xitoy tili / китайский" },
+                    { text: "播客", start: 3.6, end: 4.2, py: "bō kè", tr: "podkastiga / подкаст" }
+                ]
+            },
+
+            {
+                start: 4.2,
+                end: 8.3,
+                words: [
+                    { text: "最近", start: 4.2, end: 4.7, py: "zuì jìn", tr: "yaqinda / недавно" },
+                    { text: "我", start: 4.7, end: 5.0, py: "wǒ", tr: "men / я" },
+                    { text: "常常", start: 5.0, end: 5.7, py: "cháng cháng", tr: "tez-tez / часто" },
+                    { text: "去", start: 5.7, end: 6.0, py: "qù", tr: "boraman / хожу" },
+                    { text: "体育馆", start: 6.0, end: 7.0, py: "tǐ yù guǎn", tr: "sport zaliga / в спортзал" },
+                    { text: "打", start: 7.0, end: 7.3, py: "dǎ", tr: "o'ynash / играть" },
+                    { text: "羽毛球", start: 7.3, end: 8.3, py: "yǔ máo qiú", tr: "badminton / в бадминтон" }
+                ]
+            },
+
+            {
+                start: 8.3,
+                end: 13.7,
+                words: [
+                    { text: "以前", start: 8.3, end: 9.0, py: "yǐ qián", tr: "oldin / раньше" },
+                    { text: "我", start: 9.0, end: 9.3, py: "wǒ", tr: "men / я" },
+                    { text: "不太", start: 9.3, end: 10.0, py: "bú tài", tr: "unchalik ...-mas / не очень" },
+                    { text: "运动", start: 10.0, end: 10.7, py: "yùn dòng", tr: "sport bilan shug'ullan / занималась спортом" },
+                    { text: "但是", start: 10.7, end: 11.3, py: "dàn shì", tr: "lekin / но" },
+                    { text: "现在", start: 11.3, end: 12.0, py: "xiàn zài", tr: "hozir / сейчас" },
+                    { text: "慢慢", start: 12.0, end: 12.7, py: "màn màn", tr: "asta-sekin / постепенно" },
+                    { text: "习惯了", start: 12.7, end: 13.7, py: "xí guàn le", tr: "o'rganib qoldim / привыкла" }
+                ]
+            },
+
+            {
+                start: 13.7,
+                end: 18.7,
+                words: [
+                    { text: "有人", start: 13.7, end: 14.3, py: "yǒu rén", tr: "kimdir / кто-то" },
+                    { text: "说", start: 14.3, end: 14.7, py: "shuō", tr: "aytadi / говорит" },
+                    { text: "康老师", start: 14.7, end: 15.7, py: "Kāng lǎo shī", tr: "Kang o'qituvchi / учитель Кан" },
+                    { text: "你", start: 15.7, end: 16.0, py: "nǐ", tr: "sen / вы" },
+                    { text: "最近", start: 16.0, end: 16.7, py: "zuì jìn", tr: "yaqinda / в последнее время" },
+                    { text: "是不是", start: 16.7, end: 17.8, py: "shì bu shì", tr: "shunday emasmi / разве не" },
+                    { text: "胖了", start: 17.8, end: 18.7, py: "pàng le", tr: "to'lishib ketding / поправились" }
+                ]
+            },
+
+            {
+                start: 18.7,
+                end: 24.2,
+                words: [
+                    { text: "我", start: 18.7, end: 19.1, py: "wǒ", tr: "men / я" },
+                    { text: "说", start: 19.1, end: 19.5, py: "shuō", tr: "deyman / говорю" },
+                    { text: "胖", start: 19.5, end: 19.9, py: "pàng", tr: "to'lishish / поправиться" },
+                    { text: "一点", start: 19.9, end: 20.8, py: "yì diǎn", tr: "biroz / немного" },
+                    { text: "没关系", start: 20.8, end: 22.1, py: "méi guān xi", tr: "hech qisi yo'q / ничего страшного" },
+                    { text: "健康", start: 22.1, end: 22.9, py: "jiàn kāng", tr: "sog'lik / здоровье" },
+                    { text: "最重要", start: 22.9, end: 24.2, py: "zuì zhòng yào", tr: "eng muhim / самое главное" }
+                ]
+            },
+
+            {
+                start: 24.2,
+                end: 31.6,
+                words: [
+                    { text: "有一天", start: 24.2, end: 25.4, py: "yǒu yì tiān", tr: "bir kuni / однажды" },
+                    { text: "打完球", start: 25.4, end: 26.4, py: "dǎ wán qiú", tr: "o'ynab bo'lgach / после игры" },
+                    { text: "以后", start: 26.4, end: 27.1, py: "yǐ hòu", tr: "keyin / после" },
+                    { text: "我", start: 27.1, end: 27.4, py: "wǒ", tr: "men / я" },
+                    { text: "突然", start: 27.4, end: 28.1, py: "tū rán", tr: "to'satdan / вдруг" },
+                    { text: "接到", start: 28.1, end: 28.9, py: "jiē dào", tr: "oldim / получила" },
+                    { text: "了", start: 28.9, end: 29.2, py: "le", tr: "- / (частица)" },
+                    { text: "一个", start: 29.2, end: 29.9, py: "yí gè", tr: "bitta / один" },
+                    { text: "学生", start: 29.9, end: 30.6, py: "xué shēng", tr: "o'quvchi / студента" },
+                    { text: "的", start: 30.6, end: 30.9, py: "de", tr: "ning / (суффикс)" },
+                    { text: "电话", start: 30.9, end: 31.6, py: "diàn huà", tr: "qo'ng'iroq / звонок" }
+                ]
+            },
+
+            {
+                start: 31.6,
+                end: 39.0,
+                words: [
+                    { text: "他", start: 31.6, end: 32.0, py: "tā", tr: "u / он" },
+                    { text: "告诉", start: 32.0, end: 32.8, py: "gào su", tr: "aytdi / сказал" },
+                    { text: "我", start: 32.8, end: 33.2, py: "wǒ", tr: "menga / мне" },
+                    { text: "他", start: 33.2, end: 33.6, py: "tā", tr: "uning / он" },
+                    { text: "感冒了", start: 33.6, end: 34.7, py: "gǎn mào le", tr: "shamollaganini / простудился" },
+                    { text: "而且", start: 34.7, end: 35.5, py: "ér qiě", tr: "va / и к тому же" },
+                    { text: "还", start: 35.5, end: 35.9, py: "hái", tr: "yana / еще" },
+                    { text: "发烧", start: 35.9, end: 36.7, py: "fā shāo", tr: "isitmasi chiqayotganini / температурит" },
+                    { text: "现在", start: 36.7, end: 37.4, py: "xiàn zài", tr: "hozir / сейчас" },
+                    { text: "正在", start: 37.4, end: 38.2, py: "zhèng zài", tr: "ayni paytda / в данный момент" },
+                    { text: "住院", start: 38.2, end: 39.0, py: "zhù yuàn", tr: "kasalxonada / лежит в больнице" }
+                ]
+            },
+
+            {
+                start: 39.0,
+                end: 45.2,
+                words: [
+                    { text: "我", start: 39.0, end: 39.4, py: "wǒ", tr: "men / я" },
+                    { text: "听了", start: 39.4, end: 40.2, py: "tīng le", tr: "eshitib / услышав" },
+                    { text: "以后", start: 40.2, end: 41.1, py: "yǐ hòu", tr: "keyin / после" },
+                    { text: "很", start: 41.1, end: 41.5, py: "hěn", tr: "juda / очень" },
+                    { text: "担心", start: 41.5, end: 42.3, py: "dān xīn", tr: "xavotir oldim / заволновалась" },
+                    { text: "马上", start: 42.3, end: 43.1, py: "mǎ shàng", tr: "darhol / сразу же" },
+                    { text: "去", start: 43.1, end: 43.5, py: "qù", tr: "bordim / поехала" },
+                    { text: "医院", start: 43.5, end: 44.4, py: "yī yuàn", tr: "kasalxonaga / в больницу" },
+                    { text: "看", start: 44.4, end: 44.8, py: "kàn", tr: "ko'rishga / навестить" },
+                    { text: "他", start: 44.8, end: 45.2, py: "tā", tr: "uni / его" }
+                ]
+            },
+
+            {
+                start: 45.2,
+                end: 54.4,
+                words: [
+                    { text: "到了", start: 45.2, end: 46.0, py: "dào le", tr: "yetib borgach / добравшись" },
+                    { text: "医院", start: 46.0, end: 46.8, py: "yī yuàn", tr: "kasalxonaga / до больницы" },
+                    { text: "我", start: 46.8, end: 47.2, py: "wǒ", tr: "men / я" },
+                    { text: "看到", start: 47.2, end: 48.0, py: "kàn dào", tr: "ko'rdim / увидела" },
+                    { text: "我", start: 48.0, end: 48.4, py: "wǒ", tr: "mening / моего" },
+                    { text: "的", start: 48.4, end: 48.8, py: "de", tr: "- / (суффикс)" },
+                    { text: "学生", start: 48.8, end: 49.6, py: "xué shēng", tr: "o'quvchim / студента" },
+                    { text: "躺在", start: 49.6, end: 50.4, py: "tǎng zài", tr: "yotganini / лежащего на" },
+                    { text: "床上", start: 50.4, end: 51.2, py: "chuáng shàng", tr: "karavotda / кровати" },
+                    { text: "旁边", start: 51.2, end: 52.0, py: "páng biān", tr: "yonida / рядом" },
+                    { text: "还有", start: 52.0, end: 52.8, py: "hái yǒu", tr: "yana bor edi / еще были" },
+                    { text: "几个", start: 52.8, end: 53.6, py: "jǐ gè", tr: "bir necha / несколько" },
+                    { text: "病人", start: 53.6, end: 54.4, py: "bìng rén", tr: "bemorlar / пациентов" }
+                ]
+            },
+
+            {
+                start: 54.4,
+                end: 62.0,
+                words: [
+                    { text: "他", start: 54.4, end: 54.8, py: "tā", tr: "uning / его" },
+                    { text: "的", start: 54.8, end: 55.2, py: "de", tr: "ning / (суффикс)" },
+                    { text: "脸色", start: 55.2, end: 56.1, py: "liǎn sè", tr: "yuzi / цвет лица" },
+                    { text: "很", start: 56.1, end: 56.5, py: "hěn", tr: "juda / очень" },
+                    { text: "不好", start: 56.5, end: 57.3, py: "bù hǎo", tr: "yomon / плохой" },
+                    { text: "腿", start: 57.3, end: 57.7, py: "tuǐ", tr: "oyog'i / нога" },
+                    { text: "也", start: 57.7, end: 58.1, py: "yě", tr: "ham / тоже" },
+                    { text: "有", start: 58.1, end: 58.5, py: "yǒu", tr: "bor edi / имеет" },
+                    { text: "一点", start: 58.5, end: 59.4, py: "yì diǎn", tr: "biroz / немного" },
+                    { text: "疼", start: 59.4, end: 59.8, py: "téng", tr: "og'riq / боли" },
+                    { text: "耳朵", start: 59.8, end: 60.6, py: "ěr duo", tr: "qulog'i / ухо" },
+                    { text: "也", start: 60.6, end: 61.0, py: "yě", tr: "ham / тоже" },
+                    { text: "有点", start: 61.0, end: 61.7, py: "yǒu diǎn", tr: "biroz / немного" },
+                    { text: "红", start: 61.7, end: 62.0, py: "hóng", tr: "qizargan / красное" }
+                ]
+            },
+
+            {
+                start: 62.0,
+                end: 65.3,
+                words: [
+                    { text: "我", start: 62.0, end: 62.3, py: "wǒ", tr: "men / я" },
+                    { text: "问", start: 62.3, end: 62.7, py: "wèn", tr: "so'radim / спросила" },
+                    { text: "他", start: 62.7, end: 63.0, py: "tā", tr: "undan / его" },
+                    { text: "你", start: 63.0, end: 63.3, py: "nǐ", tr: "sening / твоя" },
+                    { text: "的", start: 63.3, end: 63.7, py: "de", tr: "- / (суффикс)" },
+                    { text: "体温", start: 63.7, end: 64.3, py: "tǐ wēn", tr: "tana harorating / температура" },
+                    { text: "高不高", start: 64.3, end: 65.3, py: "gāo bù gāo", tr: "balandmi / высокая ли" }
+                ]
+            },
+
+            {
+                start: 65.3,
+                end: 70.7,
+                words: [
+                    { text: "他", start: 65.3, end: 65.7, py: "tā", tr: "u / он" },
+                    { text: "说", start: 65.7, end: 66.0, py: "shuō", tr: "dedi / сказал" },
+                    { text: "已经", start: 66.0, end: 66.7, py: "yǐ jīng", tr: "allaqachon / уже" },
+                    { text: "低", start: 66.7, end: 67.0, py: "dī", tr: "pasaygan / снизилась" },
+                    { text: "一点", start: 67.0, end: 67.8, py: "yì diǎn", tr: "biroz / немного" },
+                    { text: "了", start: 67.8, end: 68.2, py: "le", tr: "- / (частица)" },
+                    { text: "差不多", start: 68.2, end: 69.5, py: "chà bu duō", tr: "deyarli / почти" },
+                    { text: "正常了", start: 69.5, end: 70.7, py: "zhèng cháng le", tr: "me'yorida / в норме" }
+                ]
+            },
+
+            {
+                start: 70.7,
+                end: 76.5,
+                words: [
+                    { text: "我", start: 70.7, end: 71.1, py: "wǒ", tr: "men / я" },
+                    { text: "告诉", start: 71.1, end: 71.9, py: "gào su", tr: "aytdim / сказала" },
+                    { text: "他", start: 71.9, end: 72.4, py: "tā", tr: "unga / ему" },
+                    { text: "你", start: 72.4, end: 72.8, py: "nǐ", tr: "sen / ты" },
+                    { text: "现在", start: 72.8, end: 73.6, py: "xiàn zài", tr: "hozir / сейчас" },
+                    { text: "得", start: 73.6, end: 74.0, py: "děi", tr: "-shing kerak / должен" },
+                    { text: "好好", start: 74.0, end: 74.6, py: "hǎo hao", tr: "yaxshilab / хорошенько" },
+                    { text: "休息", start: 74.6, end: 75.3, py: "xiū xi", tr: "dam olish / отдохнуть" },
+                    { text: "注意", start: 75.3, end: 75.9, py: "zhù yì", tr: "e'tibor ber / береги" },
+                    { text: "身体", start: 75.9, end: 76.5, py: "shēn tǐ", tr: "sog'likka / здоровье" }
+                ]
+            },
+
+            {
+                start: 76.5,
+                end: 86.6,
+                words: [
+                    { text: "你看", start: 76.5, end: 77.2, py: "nǐ kàn", tr: "qara / посмотри" },
+                    { text: "平时的", start: 77.2, end: 78.1, py: "píng shí de", tr: "odatdagi / обычные" },
+                    { text: "运动", start: 78.1, end: 78.7, py: "yùn dòng", tr: "sport / занятия спортом" },
+                    { text: "当然", start: 78.7, end: 79.4, py: "dāng rán", tr: "albatta / конечно" },
+                    { text: "很好", start: 79.4, end: 80.0, py: "hěn hǎo", tr: "juda yaxshi / очень хорошо" },
+                    { text: "但是", start: 80.0, end: 80.8, py: "dàn shì", tr: "lekin / но" },
+                    { text: "身体", start: 80.8, end: 81.6, py: "shēn tǐ", tr: "tana / тело" },
+                    { text: "不舒服", start: 81.6, end: 82.7, py: "bù shū fu", tr: "noqulay / неважно себя чувствует" },
+                    { text: "的", start: 82.7, end: 83.1, py: "de", tr: "- / (суффикс)" },
+                    { text: "时候", start: 83.1, end: 83.9, py: "shí hou", tr: "paytida / когда" },
+                    { text: "不能", start: 83.9, end: 84.7, py: "bù néng", tr: "mumkin emas / нельзя" },
+                    { text: "只", start: 84.7, end: 85.1, py: "zhǐ", tr: "faqat / только" },
+                    { text: "想着", start: 85.1, end: 85.8, py: "xiǎng zhe", tr: "o'ylash / думать о" },
+                    { text: "运动", start: 85.8, end: 86.6, py: "yùn dòng", tr: "sport / спорте" }
+                ]
+            },
+
+            {
+                start: 86.6,
+                end: 95.1,
+                words: [
+                    { text: "医生", start: 86.6, end: 87.3, py: "yī shēng", tr: "shifokor / врач" },
+                    { text: "也", start: 87.3, end: 87.6, py: "yě", tr: "ham / тоже" },
+                    { text: "很", start: 87.6, end: 87.8, py: "hěn", tr: "juda / очень" },
+                    { text: "关心", start: 87.8, end: 88.4, py: "guān xīn", tr: "g'amxo'rlik qildi / позаботился о" },
+                    { text: "他", start: 88.4, end: 88.7, py: "tā", tr: "unga / нем" },
+                    { text: "给", start: 88.7, end: 88.9, py: "gěi", tr: "uchun / для" },
+                    { text: "他", start: 88.9, end: 89.2, py: "tā", tr: "unga / него" },
+                    { text: "开了", start: 89.2, end: 89.8, py: "kāi le", tr: "yozib berdi / выписал" },
+                    { text: "一些", start: 89.8, end: 90.3, py: "yì xiē", tr: "ba'zi / некоторые" },
+                    { text: "药", start: 90.3, end: 90.6, py: "yào", tr: "dorilar / лекарства" },
+                    { text: "还", start: 90.6, end: 90.9, py: "hái", tr: "yana / еще" },
+                    { text: "告诉", start: 90.9, end: 91.4, py: "gào su", tr: "aytdi / сказал" },
+                    { text: "他", start: 91.4, end: 91.7, py: "tā", tr: "unga / ему" },
+                    { text: "一些", start: 91.7, end: 92.4, py: "yì xiē", tr: "ba'zi / некоторые" },
+                    { text: "恢复", start: 92.4, end: 93.2, py: "huī fù", tr: "tiklanish / восстановления" },
+                    { text: "身体", start: 93.2, end: 93.9, py: "shēn tǐ", tr: "tanani / здоровья" },
+                    { text: "的", start: 93.9, end: 94.3, py: "de", tr: "- / (суффикс)" },
+                    { text: "方法", start: 94.3, end: 95.1, py: "fāng fǎ", tr: "usullarini / методы" }
+                ]
+            },
+
+            {
+                start: 95.1,
+                end: 101.7,
+                words: [
+                    { text: "我", start: 95.1, end: 95.5, py: "wǒ", tr: "mening / мой" },
+                    { text: "的", start: 95.5, end: 95.9, py: "de", tr: "- / (суффикс)" },
+                    { text: "学生", start: 95.9, end: 96.7, py: "xué shēng", tr: "o'quvchim / студент" },
+                    { text: "笑着", start: 96.7, end: 97.4, py: "xiào zhe", tr: "kulib / с улыбкой" },
+                    { text: "说", start: 97.4, end: 97.8, py: "shuō", tr: "dedi / сказал" },
+                    { text: "看来", start: 97.8, end: 98.6, py: "kàn lái", tr: "aftidan / похоже" },
+                    { text: "以后", start: 98.6, end: 99.3, py: "yǐ hòu", tr: "kelajakda / в будущем" },
+                    { text: "我", start: 99.3, end: 99.7, py: "wǒ", tr: "men / я" },
+                    { text: "得", start: 99.7, end: 100.0, py: "děi", tr: "-şim kerak / должен" },
+                    { text: "听", start: 100.0, end: 100.3, py: "tīng", tr: "eshitishim / слушать" },
+                    { text: "老师", start: 100.3, end: 101.0, py: "lǎo shī", tr: "o'qituvchining / учителя" },
+                    { text: "的", start: 101.0, end: 101.3, py: "de", tr: "- / (суффикс)" },
+                    { text: "话", start: 101.3, end: 101.7, py: "huà", tr: "gapini / слова" }
+                ]
+            },
+
+            {
+                start: 101.7,
+                end: 102.7,
+                words: [
+                    { text: "我", start: 101.7, end: 102.0, py: "wǒ", tr: "men / я" },
+                    { text: "说", start: 102.0, end: 102.3, py: "shuō", tr: "dedim / сказала" },
+                    { text: "对", start: 102.3, end: 102.7, py: "duì", tr: "to'g'ri / правильно" }
+                ]
+            },
+
+            {
+                start: 102.7,
+                end: 109.4,
+                words: [
+                    { text: "除了", start: 102.7, end: 103.3, py: "chú le", tr: "-dan tashqari / кроме" },
+                    { text: "运动", start: 103.3, end: 104.0, py: "yùn dòng", tr: "sport / спорта" },
+                    { text: "我们", start: 104.0, end: 104.7, py: "wǒ men", tr: "bizda / у нас" },
+                    { text: "还有", start: 104.7, end: 105.4, py: "hái yǒu", tr: "yana bor / еще есть" },
+                    { text: "很多种", start: 105.4, end: 106.5, py: "hěn duō zhǒng", tr: "juda ko'p turdagi / много видов" },
+                    { text: "方法", start: 106.5, end: 107.2, py: "fāng fǎ", tr: "usullar / методов" },
+                    { text: "可以", start: 107.2, end: 107.9, py: "kě yǐ", tr: "mumkin / можно" },
+                    { text: "保持", start: 107.9, end: 108.7, py: "bǎo chí", tr: "saqlash / поддерживать" },
+                    { text: "健康", start: 108.7, end: 109.4, py: "jiàn kāng", tr: "sog'likni / здоровье" }
+                ]
+            },
+
+            {
+                start: 109.4,
+                end: 119.1,
+                words: [
+                    { text: "最重要", start: 109.4, end: 110.5, py: "zuì zhòng yào", tr: "eng muhim / самое главное" },
+                    { text: "是", start: 110.9, end: 111.3, py: "shì", tr: "-dir / это" },
+                    { text: "身体", start: 111.3, end: 112.0, py: "shēn tǐ", tr: "tana / организм" },
+                    { text: "不舒服", start: 112.0, end: 113.3, py: "bù shū fu", tr: "noqulay / не в порядке" },
+                    { text: "时候", start: 113.8, end: 114.7, py: "shí hou", tr: "paytida / когда" },
+                    { text: "要", start: 114.7, end: 115.1, py: "yào", tr: "kerak / нужно" },
+                    { text: "及时", start: 115.1, end: 116.0, py: "jí shí", tr: "o'z vaqtida / вовремя" },
+                    { text: "休息", start: 116.0, end: 116.9, py: "xiū xi", tr: "dam olish / отдыхать" },
+                    { text: "及时", start: 116.9, end: 117.8, py: "jí shí", tr: "o'z vaqtida / вовремя" },
+                    { text: "看医生", start: 117.8, end: 119.1, py: "kàn yī shēng", tr: "shifokorga ko'rinish / обратиться к врачу" }
+                ]
+            },
+
+            {
+                start: 119.1,
+                end: 122.7,
+                words: [
+                    { text: "几天", start: 119.1, end: 120.0, py: "jǐ tiān", tr: "bir necha kun / несколько дней" },
+                    { text: "以后", start: 120.0, end: 120.7, py: "yǐ hòu", tr: "keyin / спустя" },
+                    { text: "他", start: 120.7, end: 121.0, py: "tā", tr: "u / он" },
+                    { text: "终于", start: 121.0, end: 121.7, py: "zhōng yú", tr: "nihoyat / наконец" },
+                    { text: "出院了", start: 121.7, end: 122.7, py: "chū yuàn le", tr: "kasalxonadan chiqdi / выписался из больницы" }
+                ]
+            },
+
+            {
+                start: 122.7,
+                end: 132.3,
+                words: [
+                    { text: "看到", start: 122.7, end: 123.3, py: "kàn dào", tr: "ko'rib / увидев, что" },
+                    { text: "我", start: 123.3, end: 123.7, py: "wǒ", tr: "mening / мой" },
+                    { text: "学生", start: 124.0, end: 124.7, py: "xué shēng", tr: "o'quvchim / студент" },
+                    { text: "又", start: 124.7, end: 125.0, py: "yòu", tr: "yana / снова" },
+                    { text: "能", start: 125.0, end: 125.3, py: "néng", tr: "ola / может" },
+                    { text: "开心", start: 125.3, end: 126.0, py: "kāi xīn", tr: "xursand / радостно" },
+                    { text: "地", start: 126.0, end: 126.5, py: "de", tr: "bo'lib / (суффикс наречия)" },
+                    { text: "走路", start: 126.5, end: 127.6, py: "zǒu lù", tr: "yurishini / ходить" },
+                    { text: "我", start: 127.6, end: 128.1, py: "wǒ", tr: "mening / мое" },
+                    { text: "心里", start: 128.6, end: 129.7, py: "xīn lǐ", tr: "qalbim / сердце" },
+                    { text: "也", start: 129.7, end: 130.2, py: "yě", tr: "ham / тоже" },
+                    { text: "特别", start: 130.2, end: 131.3, py: "tè bié", tr: "juda / особенно" },
+                    { text: "开心", start: 131.3, end: 132.3, py: "kāi xīn", tr: "xursand / радо" }
+                ]
+            },
+
+            {
+                start: 132.3,
+                end: 139.3,
+                words: [
+                    { text: "所以", start: 132.3, end: 133.4, py: "suǒ yǐ", tr: "shuning uchun / поэтому" },
+                    { text: "最近", start: 133.4, end: 134.4, py: "zuì jìn", tr: "yaqinda / в последнее время" },
+                    { text: "我", start: 134.4, end: 134.9, py: "wǒ", tr: "men / я" },
+                    { text: "越来越", start: 134.9, end: 136.3, py: "yuè lái yuè", tr: "borgan sari / все больше и больше" },
+                    { text: "觉得", start: 136.3, end: 136.9, py: "jué de", tr: "his qilyapman / чувствую" },
+                    { text: "健康", start: 136.9, end: 137.5, py: "jiàn kāng", tr: "sog'lik / здоровье" },
+                    { text: "不是", start: 137.5, end: 138.1, py: "bú shì", tr: "emas / не" },
+                    { text: "一件", start: 138.1, end: 138.7, py: "yí jiàn", tr: "bitta / одно" },
+                    { text: "小事", start: 138.7, end: 139.3, py: "xiǎo shì", tr: "kichik narsa / пустяк" }
+                ]
+            },
+
+            {
+                start: 139.3,
+                end: 148.7,
+                words: [
+                    { text: "我们", start: 139.3, end: 139.9, py: "wǒ men", tr: "biz / мы" },
+                    { text: "平时", start: 139.9, end: 140.5, py: "píng shí", tr: "odatda / обычно" },
+                    { text: "可以", start: 140.5, end: 141.1, py: "kě yǐ", tr: "mumkin / можем" },
+                    { text: "运动", start: 141.1, end: 141.7, py: "yùn dòng", tr: "sport bilan shug'ullanish / заниматься спортом" },
+                    { text: "但是", start: 141.7, end: 142.3, py: "dàn shì", tr: "lekin / но" },
+                    { text: "也", start: 142.3, end: 142.7, py: "yě", tr: "ham / также" },
+                    { text: "要", start: 142.7, end: 143.0, py: "yào", tr: "kerak / должны" },
+                    { text: "学会", start: 143.0, end: 143.7, py: "xué huì", tr: "o'rganishimiz / научиться" },
+                    { text: "照顾", start: 143.7, end: 144.3, py: "zhào gù", tr: "g'amxo'rlik qilishni / заботиться о" },
+                    { text: "自己", start: 144.3, end: 145.0, py: "zì jǐ", tr: "o'zimizga / себе" },
+                    { text: "关心", start: 145.0, end: 145.7, py: "guān xīn", tr: "g'amxo'rlik qilish / заботиться о" },
+                    { text: "自己", start: 145.7, end: 146.3, py: "zì jǐ", tr: "o'zimizga / себе" },
+                    { text: "也", start: 146.3, end: 146.7, py: "yě", tr: "ham / и" },
+                    { text: "关心", start: 146.7, end: 147.3, py: "guān xīn", tr: "g'amxo'rlik qilish / заботиться о" },
+                    { text: "身边", start: 147.3, end: 148.0, py: "shēn biān", tr: "yonimizdagi / окружающих" },
+                    { text: "的", start: 148.0, end: 148.4, py: "de", tr: "- / (суффикс)" },
+                    { text: "人", start: 148.4, end: 148.7, py: "rén", tr: "odamlarga / людях" }
+                ]
+            },
+
+            {
+                start: 148.7,
+                end: 157.6,
+                words: [
+                    { text: "好了", start: 148.7, end: 149.4, py: "hǎo le", tr: "bo'ldi / ладно" },
+                    { text: "今天", start: 149.4, end: 150.1, py: "jīn tiān", tr: "bugungi / сегодняшний" },
+                    { text: "小故事", start: 150.5, end: 151.5, py: "xiǎo gù shì", tr: "hikoyamiz / рассказ" },
+                    { text: "就", start: 151.5, end: 151.9, py: "jiù", tr: "shunday qilib / так" },
+                    { text: "分享", start: 151.9, end: 152.6, py: "fēn xiǎng", tr: "baham ko'rdik / поделилась" },
+                    { text: "到这里", start: 152.6, end: 153.6, py: "dào zhè lǐ", tr: "shu yergacha / до этого места" },
+                    { text: "我们", start: 153.6, end: 155.0, py: "wǒ men", tr: "biz / мы" },
+                    { text: "下次", start: 155.0, end: 157.0, py: "xià cì", tr: "keyingi safar / в следующий раз" },
+                    { text: "再见", start: 157.0, end: 157.6, py: "zài jiàn", tr: "ko'rishguncha / увидимся" }
+                ]
+            }
+
+        ];
+
+
+        /* ==========================================
+           字幕渲染
+           ========================================== */
+
+        const container =
+            document.getElementById('transcript-container');
+
         let transcriptElements = [];
 
+
         function renderTranscript() {
+
             container.innerHTML = '';
+
             transcriptElements = [];
 
+
             transcriptData.forEach((item, index) => {
+
                 const lineDiv = document.createElement('div');
-                lineDiv.className = "flex gap-3 p-4 mb-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 border-l-4 border-transparent group";
+
+                lineDiv.className =
+                    "flex gap-3 p-4 mb-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 border-l-4 border-transparent group";
+
                 lineDiv.dataset.start = item.start;
                 lineDiv.dataset.index = index;
-                
-                // 左侧播放小图标
-                const playBtnHtml = `<div class="shrink-0 mt-2 text-gray-300 group-hover:text-red-500 transition-colors"><i data-lucide="play-circle" class="w-5 h-5"></i></div>`;
-                
-                let wordsHtml = '<div class="text-lg font-medium text-gray-800 leading-loose flex flex-wrap gap-x-1">';
-                
+
+
+                /* 播放图标 */
+
+                const playBtnHtml = `
+                    <div
+                        class="shrink-0 mt-2 text-gray-300 group-hover:text-red-500 transition-colors"
+                    >
+                        <i
+                            data-lucide="play-circle"
+                            class="w-5 h-5">
+                        </i>
+                    </div>
+                `;
+
+
+                /* 字幕 */
+
+                let wordsHtml =
+                    '<div class="text-lg font-medium text-gray-800 leading-loose flex flex-wrap gap-x-1">';
+
+
                 item.words.forEach(w => {
+
                     if (w.py) {
-                        // 使用 cursor-pointer 替代问号
+
                         wordsHtml += `
-                            <ruby class="dict-word relative hover:bg-red-100 hover:text-red-700 rounded px-1 transition-colors cursor-pointer" data-py="${w.py}" data-tr="${w.tr}">
+                            <ruby
+                                class="dict-word relative hover:bg-red-100 hover:text-red-700 rounded px-1 transition-colors cursor-pointer"
+                                data-py="${w.py}"
+                                data-tr="${w.tr}"
+                            >
                                 ${w.text}
-                                <rt class="pinyin-text text-sm text-gray-500 mb-1 pointer-events-none">${w.py}</rt>
+                                <rt
+                                    class="pinyin-text text-sm text-gray-500 mb-1 pointer-events-none"
+                                >
+                                    ${w.py}
+                                </rt>
                             </ruby>
                         `;
-                    } else {
-                        wordsHtml += `<span class="py-1 text-gray-500">${w.text}</span>`;
-                    }
-                });
-                
-                wordsHtml += '</div>';
-                lineDiv.innerHTML = playBtnHtml + wordsHtml;
 
-                // 点击跳转播放时间
+                    } else {
+
+                        wordsHtml += `
+                            <span class="py-1 text-gray-500">
+                                ${w.text}
+                            </span>
+                        `;
+
+                    }
+
+                });
+
+
+                wordsHtml += '</div>';
+
+                lineDiv.innerHTML =
+                    playBtnHtml + wordsHtml;
+
+
+                /* 点击字幕跳转视频 */
+
                 lineDiv.addEventListener('click', (e) => {
-                    if (e.target.closest('.dict-word')) return; // 点单词不要跳转视频
+
+                    if (e.target.closest('.dict-word')) {
+                        return;
+                    }
 
                     if (player && player.seekTo) {
+
                         player.seekTo(item.start, true);
                         player.playVideo();
+
                     }
+
                 });
+
 
                 container.appendChild(lineDiv);
+
                 transcriptElements.push(lineDiv);
+
             });
+
 
             lucide.createIcons();
+
             bindDictionaryEvents();
+
         }
+
+
+        /* ==========================================
+           互动词典
+           ========================================== */
 
         function bindDictionaryEvents() {
-            const tooltip = document.getElementById('dictionary-tooltip');
-            const pyEl = document.getElementById('tt-pinyin');
-            const trEl = document.getElementById('tt-trans');
+
+            const tooltip =
+                document.getElementById('dictionary-tooltip');
+
+            const pyEl =
+                document.getElementById('tt-pinyin');
+
+            const trEl =
+                document.getElementById('tt-trans');
+
 
             document.querySelectorAll('.dict-word').forEach(word => {
+
                 word.addEventListener('click', (e) => {
+
                     e.stopPropagation();
-                    const py = e.currentTarget.dataset.py;
-                    const tr = e.currentTarget.dataset.tr;
+
+
+                    const py =
+                        e.currentTarget.dataset.py;
+
+                    const tr =
+                        e.currentTarget.dataset.tr;
+
 
                     pyEl.textContent = py;
-                    
-                    // 将乌兹别克语和俄语拆分为两行显示
+
+
+                    /* 乌兹别克语 + 俄语 */
+
                     if (tr && tr.includes('/')) {
-                        const parts = tr.split('/');
-                        trEl.innerHTML = `<div class="font-bold text-gray-900">${parts[0].trim()}</div><div class="font-normal text-xs text-gray-600 mt-1">${parts[1].trim()}</div>`;
+
+                        const parts =
+                            tr.split('/');
+
+                        trEl.innerHTML = `
+                            <div class="font-bold text-gray-900">
+                                ${parts[0].trim()}
+                            </div>
+
+                            <div class="font-normal text-xs text-gray-600 mt-1">
+                                ${parts[1].trim()}
+                            </div>
+                        `;
+
                     } else {
-                        trEl.innerHTML = `<div class="font-bold text-gray-900">${tr}</div>`;
+
+                        trEl.innerHTML = `
+                            <div class="font-bold text-gray-900">
+                                ${tr}
+                            </div>
+                        `;
+
                     }
 
-                    tooltip.classList.remove('opacity-0', 'invisible');
 
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    tooltip.style.top = (rect.top - tooltip.offsetHeight - 6) + 'px';
-                    tooltip.style.left = (rect.left + (rect.width / 2)) + 'px';
+                    tooltip.classList.remove(
+                        'opacity-0',
+                        'invisible'
+                    );
+
+
+                    const rect =
+                        e.currentTarget.getBoundingClientRect();
+
+
+                    tooltip.style.top =
+                        (rect.top - tooltip.offsetHeight - 6) + 'px';
+
+                    tooltip.style.left =
+                        (rect.left + (rect.width / 2)) + 'px';
+
                 });
+
             });
+
 
             document.addEventListener('click', () => {
-                if (tooltip) tooltip.classList.add('opacity-0', 'invisible');
+
+                if (tooltip) {
+                    tooltip.classList.add(
+                        'opacity-0',
+                        'invisible'
+                    );
+                }
+
             });
+
 
             container.addEventListener('scroll', () => {
-                if (tooltip) tooltip.classList.add('opacity-0', 'invisible');
+
+                if (tooltip) {
+                    tooltip.classList.add(
+                        'opacity-0',
+                        'invisible'
+                    );
+                }
+
             });
+
         }
+
+
+        /* ==========================================
+           YouTube 播放器
+           ========================================== */
 
         let player;
+
         let syncInterval;
 
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
+
+        const tag =
+            document.createElement('script');
+
+        tag.src =
+            "https://www.youtube.com/iframe_api";
+
+
+        const firstScriptTag =
+            document.getElementsByTagName('script')[0];
+
+
         if (firstScriptTag) {
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            firstScriptTag.parentNode.insertBefore(
+                tag,
+                firstScriptTag
+            );
+
         } else {
+
             document.head.appendChild(tag);
+
         }
+
 
         window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('youtube-player', {
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        };
 
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING) {
-                syncInterval = setInterval(syncTranscript, 500);
-            } else {
-                clearInterval(syncInterval);
-            }
-        }
-
-        let currentIndex = -1;
-        function syncTranscript() {
-            if (!player || !player.getCurrentTime) return;
-            const currentTime = player.getCurrentTime();
-
-            let activeIndex = -1;
-            for (let i = 0; i < transcriptData.length; i++) {
-                if (currentTime >= transcriptData[i].start && currentTime < transcriptData[i].end) {
-                    activeIndex = i;
-                    break;
-                }
-            }
-
-            if (activeIndex !== currentIndex) {
-                if (currentIndex !== -1 && transcriptElements[currentIndex]) {
-                    transcriptElements[currentIndex].classList.remove('bg-red-50', 'border-red-500');
-                    transcriptElements[currentIndex].classList.add('border-transparent');
-                }
-                
-                if (activeIndex !== -1 && transcriptElements[activeIndex]) {
-                    transcriptElements[activeIndex].classList.add('bg-red-50', 'border-red-500');
-                    transcriptElements[activeIndex].classList.remove('border-transparent');
-                    
-                    const activeEl = transcriptElements[activeIndex];
-
-                    if (window.innerWidth < 1024) {
-                        /* 手机端字幕不再独立滚动，让整页自然滚动 */
-                        const rect = activeEl.getBoundingClientRect();
-                        const headerOffset = 80;
-                        if (rect.top < headerOffset || rect.bottom > window.innerHeight) {
-                            window.scrollTo({
-                                top: window.scrollY + rect.top - headerOffset,
-                                behavior: 'smooth'
-                            });
-                        }
-                    } else {
-                        /* PC端保持原来的字幕区域内部滚动 */
-                        container.scrollTo({
-                            top: activeEl.offsetTop - container.offsetTop - 60,
-                            behavior: 'smooth'
-                        });
+            player = new YT.Player(
+                'youtube-player',
+                {
+                    events: {
+                        'onStateChange':
+                            onPlayerStateChange
                     }
                 }
+            );
 
-                currentIndex = activeIndex;
+        };
+
+
+        /* ==========================================
+           播放状态
+           ========================================== */
+
+        function onPlayerStateChange(event) {
+
+            if (
+                event.data ==
+                YT.PlayerState.PLAYING
+            ) {
+
+                syncInterval =
+                    setInterval(
+                        syncTranscript,
+                        500
+                    );
+
+            } else {
+
+                clearInterval(
+                    syncInterval
+                );
+
             }
+
         }
 
-        const togglePinyin = document.getElementById('toggle-pinyin');
-        togglePinyin.addEventListener('change', (e) => {
-            const isChecked = e.target.checked;
-            const dot = e.target.parentElement.querySelector('.dot');
-            const bg = e.target.parentElement.querySelector('.toggle-bg');
-            
-            if(isChecked) {
-                dot.classList.add('translate-x-4');
-                bg.classList.add('bg-red-500');
-                bg.classList.remove('bg-gray-200');
-            } else {
-                dot.classList.remove('translate-x-4');
-                bg.classList.remove('bg-red-500');
-                bg.classList.add('bg-gray-200');
+
+        /* ==========================================
+           字幕同步
+           ========================================== */
+
+        let currentIndex = -1;
+
+
+        function syncTranscript() {
+
+            if (
+                !player ||
+                !player.getCurrentTime
+            ) {
+                return;
             }
 
-            const pinyinElements = document.querySelectorAll('.pinyin-text');
-            pinyinElements.forEach(el => {
-                // 修改这里：使用 '' 来清除 inline style，恢复浏览器默认的 ruby-text 排版，而不是用 'block'
-                el.style.display = isChecked ? '' : 'none';
-            });
-        });
+
+            const currentTime =
+                player.getCurrentTime();
+
+
+            let activeIndex = -1;
+
+
+            for (
+                let i = 0;
+                i < transcriptData.length;
+                i++
+            ) {
+
+                if (
+                    currentTime >= transcriptData[i].start &&
+                    currentTime < transcriptData[i].end
+                ) {
+
+                    activeIndex = i;
+                    break;
+
+                }
+
+            }
+
+
+            if (activeIndex !== currentIndex) {
+
+                /* 清除上一条 */
+
+                if (
+                    currentIndex !== -1 &&
+                    transcriptElements[currentIndex]
+                ) {
+
+                    transcriptElements[currentIndex]
+                        .classList.remove(
+                            'bg-red-50',
+                            'border-red-500'
+                        );
+
+                    transcriptElements[currentIndex]
+                        .classList.add(
+                            'border-transparent'
+                        );
+
+                }
+
+
+                /* 激活当前字幕 */
+
+                if (
+                    activeIndex !== -1 &&
+                    transcriptElements[activeIndex]
+                ) {
+
+                    transcriptElements[activeIndex]
+                        .classList.add(
+                            'bg-red-50',
+                            'border-red-500'
+                        );
+
+                    transcriptElements[activeIndex]
+                        .classList.remove(
+                            'border-transparent'
+                        );
+
+
+                    const activeEl =
+                        transcriptElements[activeIndex];
+
+
+                    /* 手机端 */
+
+                    if (window.innerWidth < 1024) {
+
+                        const rect =
+                            activeEl.getBoundingClientRect();
+
+                        const headerOffset = 80;
+
+
+                        if (
+                            rect.top < headerOffset ||
+                            rect.bottom > window.innerHeight
+                        ) {
+
+                            window.scrollTo({
+
+                                top:
+                                    window.scrollY +
+                                    rect.top -
+                                    headerOffset,
+
+                                behavior: 'smooth'
+
+                            });
+
+                        }
+
+                    }
+
+                    /* PC端 */
+
+                    else {
+
+                        container.scrollTo({
+
+                            top:
+                                activeEl.offsetTop -
+                                container.offsetTop -
+                                60,
+
+                            behavior: 'smooth'
+
+                        });
+
+                    }
+
+                }
+
+
+                currentIndex =
+                    activeIndex;
+
+            }
+
+        }
+
+
+        /* ==========================================
+           拼音开关
+           ========================================== */
+
+        const togglePinyin =
+            document.getElementById(
+                'toggle-pinyin'
+            );
+
+
+        togglePinyin.addEventListener(
+            'change',
+            (e) => {
+
+                const isChecked =
+                    e.target.checked;
+
+
+                const dot =
+                    e.target.parentElement
+                        .querySelector('.dot');
+
+
+                const bg =
+                    e.target.parentElement
+                        .querySelector('.toggle-bg');
+
+
+                if (isChecked) {
+
+                    dot.classList.add(
+                        'translate-x-4'
+                    );
+
+                    bg.classList.add(
+                        'bg-red-500'
+                    );
+
+                    bg.classList.remove(
+                        'bg-gray-200'
+                    );
+
+                } else {
+
+                    dot.classList.remove(
+                        'translate-x-4'
+                    );
+
+                    bg.classList.remove(
+                        'bg-red-500'
+                    );
+
+                    bg.classList.add(
+                        'bg-gray-200'
+                    );
+
+                }
+
+
+                const pinyinElements =
+                    document.querySelectorAll(
+                        '.pinyin-text'
+                    );
+
+
+                pinyinElements.forEach(el => {
+
+                    el.style.display =
+                        isChecked
+                            ? ''
+                            : 'none';
+
+                });
+
+            }
+        );
+
+
+        /* ==========================================
+           初始化字幕
+           ========================================== */
 
         renderTranscript();
-        
-        const initDot = togglePinyin.parentElement.querySelector('.dot');
-        const initBg = togglePinyin.parentElement.querySelector('.toggle-bg');
-        initDot.classList.add('translate-x-4');
-        initBg.classList.add('bg-red-500');
-        initBg.classList.remove('bg-gray-200');
+
+
+        /* ==========================================
+           初始化拼音开关状态
+           ========================================== */
+
+        const initDot =
+            togglePinyin.parentElement
+                .querySelector('.dot');
+
+
+        const initBg =
+            togglePinyin.parentElement
+                .querySelector('.toggle-bg');
+
+
+        initDot.classList.add(
+            'translate-x-4'
+        );
+
+
+        initBg.classList.add(
+            'bg-red-500'
+        );
+
+
+        initBg.classList.remove(
+            'bg-gray-200'
+        );
 
     </script>
+
 </body>
 </html>
