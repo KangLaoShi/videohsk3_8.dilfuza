@@ -1,0 +1,384 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.3">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="zh"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;学生付费跟进系统 - Student Tracker&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/lucide@latest"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: 'Inter', sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>[v-cloak] { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.filter-chip.active {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #2563eb;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-color: #2563eb;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="app" class="max-w-6xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Header --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h1 id="page-title" class="text-3xl font-extrabold text-slate-800 tracking-tight"&gt;学生付费跟进管理&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p id="page-subtitle" class="text-slate-500 mt-1 font-medium"&gt;课包规格：12 节课/包&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center gap-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Language Picker --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="relative group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i data-lucide="globe" class="w-4 h-4 text-blue-500"&gt;&lt;/i&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span id="current-lang-label" class="font-semibold uppercase text-sm"&gt;ZH&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"&gt;&lt;/i&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="absolute right-0 mt-2 w-32 bg-white border border-slate-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="setLang('zh')" class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"&gt;中文&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="setLang('uz')" class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"&gt;O'zbek&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="setLang('ru')" class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"&gt;Русский&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="setLang('en')" class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"&gt;English&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onclick="toggleModal(true)" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 font-bold"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;i data-lucide="plus" class="w-5 h-5"&gt;&lt;/i&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span id="add-btn-text"&gt;添加新学生&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Dashboard Stats --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="p-4 bg-blue-50 text-blue-600 rounded-2xl"&gt;&lt;i data-lucide="user" class="w-6 h-6"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="stat-total-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider"&gt;在籍学生&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="stat-total-val" class="text-3xl font-black text-slate-800"&gt;0&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="p-4 bg-amber-50 text-amber-600 rounded-2xl"&gt;&lt;i data-lucide="clock" class="w-6 h-6"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="stat-warning-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider"&gt;预警人数&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="stat-warning-val" class="text-3xl font-black text-amber-600"&gt;0&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="p-4 bg-rose-50 text-rose-600 rounded-2xl"&gt;&lt;i data-lucide="alert-circle" class="w-6 h-6"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="stat-overdue-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider"&gt;待续费&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="stat-overdue-val" class="text-3xl font-black text-rose-600"&gt;0&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Teacher Filter Chips --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="mb-6 flex flex-wrap items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest mr-2"&gt;筛选老师:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="teacher-filter-container" class="flex flex-wrap gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- JS will inject chips --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Table Container --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="overflow-x-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;table class="w-full text-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;thead class="bg-slate-50/50 border-b border-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;tr id="table-head-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;!-- JS will inject headers --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tbody id="student-table-body" class="divide-y divide-slate-50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- JS will inject rows --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="no-data" class="hidden py-20 text-center flex flex-col items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-slate-50 p-6 rounded-full mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;i data-lucide="user-x" class="w-10 h-10 text-slate-200"&gt;&lt;/i&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p id="no-data-text" class="text-slate-400 font-bold italic"&gt;暂无记录&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md hidden items-center justify-center p-4 z-[100]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 overflow-y-auto max-h-[90vh]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 id="modal-title" class="text-2xl font-black mb-6 text-slate-800 flex items-center gap-3"&gt;添加新学生&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;form id="add-student-form" class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label id="label-name" class="block text-xs font-black text-slate-400 uppercase mb-2"&gt;姓名&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input id="input-name" type="text" required class="w-full px-5 py-3 bg-slate-50 border rounded-2xl font-bold outline-none focus:border-blue-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label id="label-teacher" class="block text-xs font-black text-slate-400 uppercase mb-2"&gt;任课老师&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select id="input-teacher" required class="w-full px-5 py-3 bg-slate-50 border rounded-2xl font-bold outline-none focus:border-blue-500 appearance-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="" disabled selected id="opt-placeholder-teacher"&gt;选择老师&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Kanglaoshi"&gt;Kanglaoshi&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Lilaoshi"&gt;Lilaoshi&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Pailaoshi"&gt;Pailaoshi&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Anlaoshi"&gt;Anlaoshi&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Tielaoshi"&gt;Tielaoshi&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Lanyinglaoshi"&gt;Lanyinglaoshi&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-2 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label id="label-total" class="block text-xs font-black text-slate-400 uppercase mb-2"&gt;课包总量&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input id="input-total" type="number" value="12" required class="w-full px-5 py-3 bg-slate-50 border rounded-2xl font-bold"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label id="label-used" class="block text-xs font-black text-slate-400 uppercase mb-2"&gt;已上课时&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input id="input-used" type="number" value="0" required class="w-full px-5 py-3 bg-slate-50 border rounded-2xl font-bold"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label id="label-date" class="block text-xs font-black text-slate-400 uppercase mb-2"&gt;付费日期&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input id="input-date" type="date" class="w-full px-5 py-3 bg-slate-50 border rounded-2xl font-bold"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex gap-4 mt-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-3 border rounded-2xl font-bold text-slate-500"&gt;取消&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button type="submit" id="btn-save" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg"&gt;保存&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const translations = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>zh: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "学生付费跟进管理", subtitle: "课包规格：12 节课/包", addBtn: "添加新学生",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statTotal: "在籍学生", statWarning: "预警人数 (≤3节)", statOverdue: "待续费",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>thName: "学生姓名", thTeacher: "老师", thProgress: "进度", thRemaining: "剩余", thLastPay: "上次付费", thStatus: "状态", thActions: "操作",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>modalTitle: "添加新学生", labelName: "姓名", labelTeacher: "老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "日期",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btnCancel: "取消", btnSave: "确认保存", noData: "暂无记录", confirmDelete: "确定删除吗？",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filterAll: "全部", filterLabel: "筛选老师:"</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>uz: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Talabalar Nazorati", subtitle: "Paket: 12 dars", addBtn: "Yangi talaba",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statTotal: "Talabalar", statWarning: "Ogohlantirish", statOverdue: "To'lov kutilmoqda",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>thName: "Ismi", thTeacher: "O'qituvchi", thProgress: "Holati", thRemaining: "Qolgan", thLastPay: "To'lov sanasi", thStatus: "Holati", thActions: "Amallar",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statusPaid: "Yetarli", statusWarning: "Muddati yaqin", statusOverdue: "To'lov kerak",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>modalTitle: "Yangi talaba qo'shish", labelName: "Ism", labelTeacher: "O'qituvchi", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btnCancel: "Bekor qilish", btnSave: "Saqlash", noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filterAll: "Hammasi", filterLabel: "O'qituvchi bo'yicha:"</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>ru: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Контроль студентов", subtitle: "Пакет: 12 уроков", addBtn: "Добавить студента",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statTotal: "Всего", statWarning: "Внимание", statOverdue: "Нужна оплата",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>thName: "Имя", thTeacher: "Учитель", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Оплата", thStatus: "Статус", thActions: "Действия",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statusPaid: "Оплачено", statusWarning: "Истекает", statusOverdue: "Долг",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>modalTitle: "Добавить студента", labelName: "Имя", labelTeacher: "Учитель", labelTotal: "Всего", labelUsed: "Пройдено", labelPayDate: "Дата",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btnCancel: "Отмена", btnSave: "Сохранить", noData: "Нет записей", confirmDelete: "Удалить?",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filterAll: "Все", filterLabel: "Учитель:"</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>en: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Student Tracker", subtitle: "Package: 12 lessons/pack", addBtn: "Add Student",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statTotal: "Active", statWarning: "Warning", statOverdue: "Due",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>thName: "Name", thTeacher: "Teacher", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>modalTitle: "Add New Student", labelName: "Name", labelTeacher: "Teacher", labelTotal: "Total", labelUsed: "Used", labelPayDate: "Date",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btnCancel: "Cancel", btnSave: "Save", noData: "No data", confirmDelete: "Are you sure?",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filterAll: "All", filterLabel: "Teacher Filter:"</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const teachers = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi"];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let currentLang = 'zh';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let selectedTeacher = 'all';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let students = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ id: 1, name: 'Zhang Xiaoming', teacher: 'Kanglaoshi', totalLessons: 12, usedLessons: 10, lastPaymentDate: '2024-03-01' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ id: 2, name: 'Ali Karimov', teacher: 'Lilaoshi', totalLessons: 12, usedLessons: 12, lastPaymentDate: '2024-02-15' },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ id: 3, name: 'Ivan Petrov', teacher: 'Anlaoshi', totalLessons: 12, usedLessons: 5, lastPaymentDate: '2024-04-10' }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function setLang(lang) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>currentLang = lang;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('current-lang-label').innerText = lang;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>render();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function setTeacherFilter(teacher) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>selectedTeacher = teacher;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>render();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function toggleModal(show) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const modal = document.getElementById('modal-overlay');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>modal.style.display = show ? 'flex' : 'none';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function addStudent(e) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const newStudent = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: Date.now(),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: document.getElementById('input-name').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>teacher: document.getElementById('input-teacher').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>totalLessons: parseInt(document.getElementById('input-total').value),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>usedLessons: parseInt(document.getElementById('input-used').value),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lastPaymentDate: document.getElementById('input-date').value</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>students.push(newStudent);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('add-student-form').reset();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>toggleModal(false);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>render();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateLesson(id) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const student = students.find(s =&gt; s.id === id);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (student &amp;&amp; student.usedLessons &lt; student.totalLessons) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>student.usedLessons++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>render();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function deleteStudent(id) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (confirm(translations[currentLang].confirmDelete)) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>students = students.filter(s =&gt; s.id !== id);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>render();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function render() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const t = translations[currentLang];</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Text UI</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('page-title').innerText = t.title;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('page-subtitle').innerText = t.subtitle;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('add-btn-text').innerText = t.addBtn;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('stat-total-label').innerText = t.statTotal;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('stat-warning-label').innerText = t.statWarning;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('stat-overdue-label').innerText = t.statOverdue;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('filter-label').innerText = t.filterLabel;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('modal-title').innerText = t.modalTitle;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('label-name').innerText = t.labelName;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('label-teacher').innerText = t.labelTeacher;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('label-total').innerText = t.labelTotal;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('label-used').innerText = t.labelUsed;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('label-date').innerText = t.labelPayDate;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('btn-cancel').innerText = t.btnCancel;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('btn-save').innerText = t.btnSave;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('no-data-text').innerText = t.noData;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Filter Chips Rendering</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const filterContainer = document.getElementById('teacher-filter-container');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>filterContainer.innerHTML = '';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// All option</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const allChip = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>allChip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>allChip.innerText = t.filterAll;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>allChip.onclick = () =&gt; setTeacherFilter('all');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>filterContainer.appendChild(allChip);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Individual teacher options</p>
+<p class="p1"><span class="Apple-converted-space">            </span>teachers.forEach(teacher =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const chip = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>chip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === teacher ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>chip.innerText = teacher;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>chip.onclick = () =&gt; setTeacherFilter(teacher);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filterContainer.appendChild(chip);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Filtering Data</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const filteredStudents = selectedTeacher === 'all'<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>? students<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>: students.filter(s =&gt; s.teacher === selectedTeacher);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Stats (based on filtered data)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const overdue = filteredStudents.filter(s =&gt; (s.totalLessons - s.usedLessons) &lt;= 0).length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const warning = filteredStudents.filter(s =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let rem = s.totalLessons - s.usedLessons;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return rem &gt; 0 &amp;&amp; rem &lt;= 3;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}).length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('stat-total-val').innerText = filteredStudents.length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('stat-warning-val').innerText = warning;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('stat-overdue-val').innerText = overdue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Table Head</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const head = document.getElementById('table-head-row');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>head.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase"&gt;${t.thName}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase"&gt;${t.thTeacher}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase"&gt;${t.thProgress}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase"&gt;${t.thRemaining}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase"&gt;${t.thLastPay}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase"&gt;${t.thStatus}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase text-right"&gt;${t.thActions}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Table Body</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tbody = document.getElementById('student-table-body');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tbody.innerHTML = '';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (filteredStudents.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('no-data').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('no-data').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filteredStudents.forEach(s =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const remaining = s.totalLessons - s.usedLessons;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let statusLabel, statusClass;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (remaining &lt;= 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>statusLabel = t.statusOverdue; statusClass = "bg-rose-100 text-rose-700 border-rose-200";</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else if (remaining &lt;= 3) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>statusLabel = t.statusWarning; statusClass = "bg-amber-100 text-amber-700 border-amber-200";</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>statusLabel = t.statusPaid; statusClass = "bg-emerald-100 text-emerald-700 border-emerald-200";</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const tr = document.createElement('tr');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tr.className = "hover:bg-slate-50/50 transition-colors group";</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tr.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5 font-bold text-slate-700"&gt;${s.name}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5"&gt;&lt;span class="bg-slate-100 px-2 py-1 rounded-lg text-xs font-medium text-slate-600"&gt;${s.teacher}&lt;/span&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="text-xs font-black text-slate-600"&gt;${s.usedLessons}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="h-full rounded-full ${remaining &lt;= 3 ? 'bg-amber-500' : 'bg-blue-600'}" style="width: ${(s.usedLessons/s.totalLessons)*100}%"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5 font-black text-slate-800"&gt;${remaining}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5 text-slate-500 text-sm font-medium"&gt;${s.lastPaymentDate || '---'}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="px-3 py-1 rounded-full text-[10px] font-black uppercase border ${statusClass}"&gt;${statusLabel}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="px-6 py-5 text-right"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button onclick="updateLesson(${s.id})" class="text-xs font-bold px-2 py-1 bg-blue-50 text-blue-600 rounded border border-blue-100"&gt;+1&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button onclick="deleteStudent(${s.id})" class="p-1.5 text-rose-400"&gt;&lt;i data-lucide="trash-2" class="w-4 h-4"&gt;&lt;/i&gt;&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tbody.appendChild(tr);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>lucide.createIcons();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('add-student-form').addEventListener('submit', addStudent);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.onload = render;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
